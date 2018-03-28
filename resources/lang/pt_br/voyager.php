@@ -72,7 +72,7 @@ return [
         'required'               => 'Requerido',
         'return_to_list'         => 'Voltar à lista',
         'route'                  => 'Rota',
-        'save'                   => 'Guardar',
+        'save'                   => 'Salvar',
         'search'                 => 'Procurar',
         'select_all'             => 'Selecione Todos',
         'select_group'           => 'Selecione um grupo existente ou adicione um novo',
