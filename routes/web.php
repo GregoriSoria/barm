@@ -25,3 +25,16 @@ Route::group(['prefix' => 'admin'], function () {
         });
     });
 });
+
+Route::group(['namespace' => 'Api', /*'middleware' => 'admin.user',*/ 'prefix' => 'api'], function () {
+    Route::group(['prefix' => 'products'], function () {
+        Route::get('/', 'ProductsController@list');
+        Route::post('/', 'ProductsController@store');
+        Route::put('/{id}', 'ProductsController@store');
+        Route::get('/{id}', 'ProductsController@find');
+    });
+
+    Route::group(['prefix' => 'orders'], function () {
+        Route::post('/{phone}', 'OrdersController@quick');
+    });
+});

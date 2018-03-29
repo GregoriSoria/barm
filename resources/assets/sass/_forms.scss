@@ -1,0 +1,17 @@
+form {
+
+  .list-group-item {
+    user-select: none;
+
+    i:before {
+      position: absolute;
+      right: 5px;
+      font-size: 25px;
+    }
+  }
+
+  [disabled=disabled] {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
