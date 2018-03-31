@@ -13,7 +13,7 @@
 
 @section('content')
     <div class="page-content container-fluid">
-        <form class="form-edit-add" role="form" action="/admin/quick-order" method="POST" enctype="multipart/form-data">
+        <form id="orderForm" class="form-edit-add" role="form" action="/admin/quick-order" method="POST" enctype="multipart/form-data">
             {{ csrf_field() }}
             <div class="row">
                 <div class="col-md-8">
@@ -24,7 +24,7 @@
                             </h3>
                         </div>
                         <div class="panel-body">
-                            <input type="text" class="form-control" id="phone_primary" name="phone_primary" pattern="\d+" placeholder="Telefone">
+                            <input type="tel" class="form-control phone" required min="15" max="16" id="phone_primary" name="phone_primary" placeholder="Telefone">
                         </div>
                     </div>
 
@@ -39,7 +39,7 @@
                         <div class="panel-body">
                             <div><label for="name">Produtos</label></div>
                             <div class="products-list list-group col-md-5">
-                                <!--<a href="#" class="list-group-item list-group-item-action"><span> sample </span> <i class="voyager-plus"></i></a>-->
+
                             </div>
                         </div>
                     </div><!-- .panel -->
@@ -53,26 +53,26 @@
                         </div>
                         <div class="panel-body">
                             <div class="form-group">
-                                <input type="text" class="form-control" id="adress" name="adress" placeholder="Endereço">
+                                <input type="text" class="form-control" required id="adress" name="adress" placeholder="Endereço" maxlength="80">
                             </div>
 
                             <div class="form-group">
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Nome">
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Nome" maxlength="60">
                             </div>
 
                             <div class="form-group">
-                                <input type="text" class="form-control" id="phone_secondary" name="phone_secondary" placeholder="Telefone secundário">
+                                <input type="tel" class="form-control phone" id="phone_secondary" name="phone_secondary" placeholder="Telefone secundário">
                             </div>
 
                             <div class="form-group">
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                                <input type="email" class="form-control email" id="email" name="email" placeholder="Email">
                             </div>
                         </div>
                     </div><!-- .panel -->
                 </div>
                 <div class="col-md-4">
                     <!-- ### DETAILS ### -->
-                    <div class="panel panel panel-bordered panel-warning">
+                    <div class="panel pedido panel-bordered panel-warning">
                         <div class="panel-heading">
                             <h3 class="panel-title"><i class="icon wb-clipboard"></i> Pedido</h3>
                             <div class="panel-actions">
@@ -83,17 +83,19 @@
                             <div class="panel-body">
                                 <label for="name">Produtos</label>
                                 <div class="order-products-list list-group">
-                                    <!--<a href="#" class="list-group-item list-group-item-action"><span>Cras justo odio</span> <i class="voyager-x"></i></a> -->
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <button type="submit" class="btn btn-primary pull-right">Confirmar pedido</button>
+            <button type="submit" class="btn btn-primary">Confirmar pedido</button>
+            <button id="btnClear" class="btn btn-warning">Limpar</button>
         </form>
     </div>
 @endsection
 
 <script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+

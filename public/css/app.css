@@ -8363,8 +8363,27 @@ form .list-group-item i:before {
   font-size: 25px;
 }
 
+form .list-group-item .badge {
+  margin-right: 24px;
+  margin-top: 3px;
+}
+
 form [disabled=disabled] {
   opacity: 0.6;
   pointer-events: none;
+}
+
+form input.invalid {
+  border: 1px solid red;
+}
+
+form .panel.pedido {
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+form .panel.pedido.invalid {
+  -webkit-box-shadow: 0 2px 10px red;
+          box-shadow: 0 2px 10px red;
 }
 

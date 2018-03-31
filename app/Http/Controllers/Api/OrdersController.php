@@ -12,10 +12,8 @@ use Illuminate\Http\Request;
 
 class OrdersController extends Controller
 {
-    public function quick(Request $request, $phone) {
-        return new JsonResponse(['oi' => 'tchau']);
-
-        $customer = Customer::where('phone_primary', $phone);
+    public function quick(Request $request) {
+        $customer = Customer::where('phone_primary', $request->input('phone_primary'))->first();
 
         if (!$customer) {
             $customer = new Customer;
@@ -23,35 +21,37 @@ class OrdersController extends Controller
 
         $customer->name = $request->input('name');
         $customer->email = $request->input('email');
-        $customer->phone_primary = $phone;
+        $customer->phone_primary = $request->input('phone_primary');
         $customer->phone_secondary = $request->input('phone_secondary');
 
-        $customer->saveOrFail();
+        $customer->save();
         
         $order = new Order;
         $order->customer_id = $customer->id;
+        $order->adress = $request->input('adress');
         $order->employee_id = 1;
         $order->status = "FAZENDO";
 
-        $order->saveOrFail();
+        $order->save();
 
         $products = $request['products'];
 
         for ($i = 0; $i < count($products); $i++) {
-            $product = Product::where('id', $products[$i]['id'])->where('quantity', '>=', $products[$i]['quantity']);
+            $product = Product::where('id', $products[$i]['id'])->where('quantity', '>=', $products[$i]['quantity'])->first();
             if ($product) {
                 $product->quantity -= $products[$i]['quantity'];
-                $product->saveOrFail();
+                $product->save();
 
                 $productOrder = new OrderProduct;
                 $productOrder->product_id = $product->id;
                 $productOrder->order_id = $order->id;
+                $productOrder->quantity = $products[$i]['quantity'];
 
-                $productOrder->saveOrFail();
+                $productOrder->save();
             }
         }
 
 
-        return new JsonResponse(Order::all());
+        return new JsonResponse($order);
     }
 }

@@ -106,11 +106,11 @@ return [
     'profile' => [
         'avatar'        => 'Avatar',
         'edit'          => 'Editar o meu perfil',
-        'edit_user'     => 'Editar Utilizador',
+        'edit_user'     => 'Editar Usuário',
         'password'      => 'Senha',
         'password_hint' => 'Deixar vazio para manter o valor atual',
         'role'          => 'Função',
-        'user_role'     => 'Função do Utilizador',
+        'user_role'     => 'Função do Usuário',
     ],
 
     'settings' => [
@@ -344,9 +344,9 @@ return [
         'post'                    => 'Publicação|Publicações',
         'post_link_text'          => 'Ver todas as publicações',
         'post_text'               => 'Tem :count :string na seu banco de dados. Clique no botão abaixo para ver todas as publicações.',
-        'user'                    => 'Utilizador|Utilizadores',
-        'user_link_text'          => 'Ver todos os utilizadores',
-        'user_text'               => 'Tem :count :string na seu banco de dados. Clique no botão abaixo para ver todos os utilizadores.',
+        'user'                    => 'Usuário|Usuários',
+        'user_link_text'          => 'Ver todos os Usuários',
+        'user_text'               => 'Tem :count :strings no seu banco de dados. Clique no botão abaixo para ver todos os Usuários.',
         'accommodation'           => 'Acomodação|Acomodações',
         'accommodation_link_text' => 'Ver todas as acomodações',
         'accommodation_text'      => 'Tem :count :string na seu banco de dados. Clique no botão abaixo para ver todas as acomodações.',
