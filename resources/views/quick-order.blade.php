@@ -1,6 +1,6 @@
 @extends('voyager::master')
 
-<link rel="stylesheet" href="{{ asset('css/app.css') }}">
+<link rel="stylesheet" href="{{ asset(env('APP_URL', '') . '/css/app.css') }}">
 
 @section('page_title', 'Pedido Rápido')
 
@@ -14,7 +14,7 @@
 @section('content')
     <div class="page-content container-fluid">
         <form id="orderForm" class="form-edit-add" role="form" action="/admin/quick-order" method="POST" enctype="multipart/form-data">
-            {{ csrf_field() }}
+
             <div class="row">
                 <div class="col-md-8">
                     <div class="panel">
@@ -96,6 +96,5 @@
     </div>
 @endsection
 
-<script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+<script type="text/javascript" src="{{ asset(env('APP_URL', '') . '/js/app.js') }}"></script>
 

@@ -12,10 +12,10 @@
 */
 
 
-Route::group(['prefix' => ''], function () {
+Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 
-    Route::group(['middleware' => 'admin.user', 'as' => 'admin.'], function () {
+    Route::group(['middleware' => 'admin.user'], function () {
         Route::get('/quick-order', function () {
             return view('quick-order');
         });

@@ -17,7 +17,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['namespace' => 'Api'], function () {
+Route::group(['namespace' => 'Api', 'prefix' => 'api'], function () {
     Route::group(['prefix' => 'products'], function () {
         Route::get('/', 'ProductsController@list');
         Route::post('/', 'ProductsController@store');

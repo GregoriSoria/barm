@@ -1,6 +1,8 @@
 window.$ = window.jQuery = require('jquery');
 var Inputmask = require('inputmask');
 
+var APIURL = '/admin/api';
+
 var quickOrder = {
     init: function() {
         console.log('QuickOrder!');
@@ -20,7 +22,7 @@ var quickOrder = {
     },
 
     setProductListItem: function(quantity, id, name, value) {
-        return '<a href="#" ondragstart="return false;" class="list-group-item list-group-item-action" data-id="'+id+'" data-quantity="'+quantity+'" data-value="'+value+'"><span class="name">'+name+'</span><i class="voyager-plus"></i><span class="badge badge-primary badge-pill">'+quantity+'</span></a>';
+        return '<a href="#" ondragstart="return false;" class="list-group-item list-group-item-action" '+(quantity > 0 ? '': 'disabled="disabled"')+' data-id="'+id+'" data-quantity="'+quantity+'" data-value="'+value+'"><span class="name">'+name+'</span><i class="voyager-plus"></i><span class="badge badge-primary badge-pill">'+quantity+'</span></a>';
     },
 
     setOrderProductListItem: function(quantity, id, name, value) {
@@ -37,7 +39,7 @@ var quickOrder = {
     listProducts: function () {
         var self = this;
         $.ajax({
-            url: '/api/products',
+            url: APIURL + '/products',
             success: function(products) {
                 products.forEach(function(product) {
                     $(self.productsList).append(self.setProductListItem(product.quantity, product.id, product.name, product.value));
@@ -64,6 +66,9 @@ var quickOrder = {
                 value = $(this).data('value');
 
             var quantity = document.querySelector(self.productsListItem+'[data-id="'+id+'"]').getAttribute('data-quantity')-1;
+            if (quantity <= 0) {
+                return;
+            }
             document.querySelector(self.productsListItem+'[data-id="'+id+'"]').setAttribute('data-quantity', quantity);
             document.querySelector(self.productsListItem+'[data-id="'+id+'"] .badge').innerHTML = quantity;
 
@@ -205,14 +210,18 @@ var quickOrder = {
                 $.ajax({
                     type: 'POST',
                     data: order,
-                    url: '/api/orders/quick',
+                    url: APIURL + '/orders/quick',
                     success: function (response) {
                         console.log(response);
+                        toastr.success('Pedido adicionado com sucesso!');
                     },
                     error: function (err) {
                         console.log(err);
+                        toastr.error('Ocorrreu algum problema no envio do pedido. Informe ao desenvolvedor do site');
                     }
                 })
+            } else {
+                toastr.warning('Formulário inválido. Verique os campos');
             }
         });
     },
