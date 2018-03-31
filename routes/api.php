@@ -25,6 +25,10 @@ Route::group(['namespace' => 'Api', 'prefix' => 'api'], function () {
         Route::get('/{id}', 'ProductsController@find');
     });
 
+    Route::group(['prefix' => 'customers'], function () {
+        Route::get('/byPhone/{phone}', 'CustomersController@byPhone');
+    });
+
     Route::group(['prefix' => 'orders'], function () {
         Route::post('/quick', 'OrdersController@quick');
     });

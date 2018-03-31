@@ -30,6 +30,7 @@ var quickOrder = {
     },
 
     declarations: function() {
+        this.onBlurPhone();
         this.onAddProduct();
         this.onRemoveProduct();
         this.onSubmit();
@@ -66,7 +67,7 @@ var quickOrder = {
                 value = $(this).data('value');
 
             var quantity = document.querySelector(self.productsListItem+'[data-id="'+id+'"]').getAttribute('data-quantity')-1;
-            if (quantity <= 0) {
+            if (parseInt(document.querySelector(self.productsListItem+'[data-id="'+id+'"] .badge').innerHTML) <= 0) {
                 return;
             }
             document.querySelector(self.productsListItem+'[data-id="'+id+'"]').setAttribute('data-quantity', quantity);
@@ -194,6 +195,32 @@ var quickOrder = {
         document.querySelector("[name='name']").value = '';
         document.querySelector("[name='phone_secondary']").value = '';
         document.querySelector("[name='email']").value = '';
+
+        $("[name='phone_primary']").focus();
+    },
+
+    onBlurPhone: function () {
+        var self = this;
+        $('[name=phone_primary]').blur(function() {
+            var phone_primary = document.querySelector("[name='phone_primary']");
+            if (Inputmask.isValid(phone_primary.value, { mask: "(99) 9 9999-999[9]"})) {
+                $.ajax({
+                    type: 'GET',
+                    url: APIURL + '/customers/byPhone/' + phone_primary.inputmask.unmaskedvalue(),
+                    success: function (customer) {
+                        document.querySelector("[name='adress']").value = customer.adress;
+                        document.querySelector("[name='name']").value = customer.name;
+                        document.querySelector("[name='phone_secondary']").value = customer.phone_secondary;
+                        document.querySelector("[name='email']").value = customer.email;
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            } else {
+                console.log('ué');
+            }
+        });
     },
 
     onSubmit: function() {
