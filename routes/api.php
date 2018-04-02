@@ -29,6 +29,23 @@ Route::group(['namespace' => 'Api', 'prefix' => 'api'], function () {
         Route::get('/byPhone/{phone}', 'CustomersController@byPhone');
     });
 
+    Route::group(['prefix' => 'states'], function () {
+        Route::get('/', 'StatesController@list');
+        Route::post('/', 'StatesController@new');
+    });
+
+    Route::group(['prefix' => 'cities'], function () {
+        Route::get('/', 'CitiesController@list');
+        Route::get('/byState/{id}', 'CitiesController@byState');
+        Route::post('/', 'CitiesController@new');
+    });
+
+    Route::group(['prefix' => 'neighborhoods'], function () {
+        Route::get('/', 'NeighborhoodsController@list');
+        Route::get('/byCity/{id}', 'NeighborhoodsController@byCity');
+        Route::post('/', 'NeighborhoodsController@new');
+    });
+
     Route::group(['prefix' => 'orders'], function () {
         Route::post('/quick', 'OrdersController@quick');
     });

@@ -53,8 +53,37 @@
                         </div>
                         <div class="panel-body">
                             <div class="form-group">
+                                <select class="form-control select2" required name="state" id="state">
+                                    <option value="">Selecione um Estado</option>
+                                    <option value="1">Rio Grande do Sul</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <select class="form-control select2" required name="city" id="city">
+                                    <option value="">Selecione uma Cidade</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <select class="form-control select2" required name="neighborhood" id="neighborhood">
+                                    <option value="">Selecione um Bairro</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
                                 <input type="text" class="form-control" required id="adress" name="adress" placeholder="Endereço" maxlength="80">
                             </div>
+
+                            <div class="form-group">
+                                <input type="text" class="form-control" required id="number" name="number" placeholder="Número" maxlength="30">
+                            </div>
+
+                            <div class="form-group">
+                                <input type="text" class="form-control" required id="search" name="search" placeholder="Procurar endereço" maxlength="80">
+                            </div>
+
+                            <div id="map"></div>
 
                             <div class="form-group">
                                 <input type="text" class="form-control" id="name" name="name" placeholder="Nome" maxlength="60">
@@ -70,7 +99,7 @@
                         </div>
                     </div><!-- .panel -->
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 col-pedido">
                     <!-- ### DETAILS ### -->
                     <div class="panel pedido panel-bordered panel-warning">
                         <div class="panel-heading">
@@ -97,4 +126,5 @@
 @endsection
 
 <script type="text/javascript" src="{{ asset(env('APP_URL', '') . '/js/app.js') }}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{setting('site.googlemapskey')}}&libraries=places" async defer></script>
 

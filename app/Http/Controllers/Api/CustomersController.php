@@ -13,10 +13,14 @@ class CustomersController extends Controller
     public function byPhone(Request $request, $phone) {
         $customer = Customer::where('phone_primary', $phone)->first();
 
-        $order = Order::where('customer_id', $customer->id)->first();
+        if ($customer) {
+            $order = Order::where('customer_id', $customer->id)->first();
 
-        $customer['adress'] = $order->adress;
+            if ($order) {
+                $customer['adress'] = $order->adress;
+            }
+        }
 
-        return new JsonResponse($customer);
+        return new JsonResponse($customer?: []);
     }
 }

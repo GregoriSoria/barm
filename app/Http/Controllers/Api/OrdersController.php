@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Adress;
 use App\Customer;
 use App\Http\Controllers\Controller;
 use App\Order;
@@ -24,10 +25,22 @@ class OrdersController extends Controller
         $customer->phone_primary = $request->input('phone_primary');
         $customer->phone_secondary = $request->input('phone_secondary');
 
-        $customer->save();
-        
+        $customer->saveOrFail();
+
+        $adress = new Adress;
+        $adress->full_adress = $request->input('full_adress');
+        $adress->adress = $request->input('adress');
+        $adress->number = $request->input('number');
+        $adress->neighborhood_id = $request->input('neighborhood_id');
+        $adress->lat = $request->input('lat');
+        $adress->long = $request->input('long');
+        $adress->customer_id = $customer->id;
+
+        $adress->saveOrFail();
+
         $order = new Order;
         $order->customer_id = $customer->id;
+        $order->adress_id = $adress->id;
         $order->adress = $request->input('adress');
         $order->employee_id = 1;
         $order->status = "FAZENDO";

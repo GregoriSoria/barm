@@ -3,18 +3,218 @@ var Inputmask = require('inputmask');
 
 var APIURL = '/admin/api';
 
-var quickOrder = {
+window.quickOrder = {
     init: function() {
         console.log('QuickOrder!');
         this.setMasks();
         this.declarations();
         this.listProducts();
+        this.listStates();
+        this.startMaps();
     },
 
+    map: null,
+    markers: [],
+    search: document.getElementById('search'),
+    searchBox: null,
+    adress: {},
+
+    canRefreshCity: true,
+    canRefreshNeighborhood: true,
     productsList: '.products-list',
     productsListItem: '.products-list .list-group-item',
     orderProductsList: '.order-products-list',
     orderProductsListItem: '.order-products-list .list-group-item',
+
+    startMaps: function() {
+        var self = this;
+        var porto_alegre = {lat: (window.lat ? window.lat :-30.0426525), lng: (window.lang ? window.lang : -51.1816439)};
+        this.map = new google.maps.Map(document.getElementById('map'), {
+            center: porto_alegre,
+            zoom: 12,
+            mapTypeId: 'roadmap'
+        });
+
+        this.searchBox = new google.maps.places.SearchBox(document.getElementById('search'));
+        this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(this.search);
+
+        this.map.addListener('bounds_changed', function() {
+            self.searchBox.setBounds(self.map.getBounds());
+        });
+        this.searchBox.addListener('places_changed', function() {
+            var places = self.searchBox.getPlaces();
+
+
+            if (places.length == 0) {
+                return;
+            }
+            console.log('PLACE', places[0]);
+            self.setPlaces(places[0]);
+
+            // Clear out the old markers.
+            self.markers.forEach(function(marker) {
+                marker.setMap(null);
+            });
+
+            // For each place, get the icon, name and location.
+            var bounds = new google.maps.LatLngBounds();
+            places.forEach(function(place) {
+                if (!place.geometry) {
+                    console.log("Returned place contains no geometry");
+                    return;
+                }
+
+                var icon = {
+                    url: place.icon,
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(25, 25)
+                };
+
+                // Create a marker for each place.
+                self.markers[0] = new google.maps.Marker({
+                    map: self.map,
+                    icon: icon,
+                    title: place.name,
+                    position: place.geometry.location
+                });
+
+                if (place.geometry.viewport) {
+                    // Only geocodes have viewport.
+                    bounds.union(place.geometry.viewport);
+                } else {
+                    bounds.extend(place.geometry.location);
+                }
+            });
+            self.map.fitBounds(bounds);
+        });
+    },
+
+    setPlaces: function(place) {
+        var self = this;
+        var components = place.address_components;
+
+        self.adress = {
+            state: self.getAddressComponentsValues(components, "administrative_area_level_1"),
+            city: self.getAddressComponentsValues(components, "administrative_area_level_2"),
+            neighborhood: self.getAddressComponentsValues(components, "sublocality_level_1"),
+            street: self.getAddressComponentsValues(components, "route"),
+            lat: place.geometry.location.lat(),
+            long: place.geometry.location.lng()
+        };
+
+        self.setState(self.adress.state);
+        self.setCity(self.adress.city);
+        self.setNeighborhood(self.adress.neighborhood);
+        window.lat = self.adress.lat;
+        window.long = self.adress.long;
+        document.getElementById('adress').value = self.adress.street.long_name;
+        $('#number').focus();
+    },
+
+    setState: function(state) {
+        var self = this;
+        if (state) {
+            var found = false;
+            $('#state option').each(function() {
+                if ($(this).text().toUpperCase().indexOf(state.long_name.toUpperCase()) != -1) {
+                    $('#state').val($(this).val()).trigger('change');
+                    found = true;
+                }
+            });
+
+            if (!found) {
+                $.ajax({
+                    async: false,
+                    type: 'POST',
+                    url: APIURL + '/states',
+                    data: state,
+                    success: function(state) {
+                        self.listStates(state.id);
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                })
+            }
+        } else {
+            $('#state').val('').trigger('change');
+        }
+    },
+
+    setCity: function(city) {
+        var self = this;
+        if (city) {
+            var found = false;
+            $('#city option').each(function () {
+                if ($(this).text().toUpperCase().indexOf(city.long_name.toUpperCase()) != -1) {
+                    $('#city').val($(this).val()).trigger('change');
+                    found = true;
+                }
+            });
+
+            if (!found) {
+                city.state_id = $('#state').val();
+                $.ajax({
+                    async: false,
+                    type: 'POST',
+                    url: APIURL + '/cities',
+                    data: city,
+                    success: function(city) {
+                        self.listCities(city.state_id, city.id);
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                })
+            }
+        } else {
+            $('#city').val('').trigger('change');
+        }
+    },
+
+    setNeighborhood: function(neighborhood) {
+        var self = this;
+        if (neighborhood) {
+            var found = false;
+            $('#neighborhood option').each(function () {
+                if ($(this).text().toUpperCase().indexOf(neighborhood.long_name.toUpperCase()) != -1) {
+                    $('#neighborhood').val($(this).val()).trigger('change');
+                    found = true;
+                }
+            });
+
+            if (!found) {
+                neighborhood.city_id = $('#city').val();
+                $.ajax({
+                    async: false,
+                    type: 'POST',
+                    url: APIURL + '/neighborhoods',
+                    data: neighborhood,
+                    success: function(neighborhood) {
+                        self.listNeighborhoods(neighborhood.city_id, neighborhood.id);
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                })
+            }
+        } else {
+            $('#neighborhood').val('').trigger('change');
+        }
+    },
+
+    getAddressComponentsValues: function(components, type) {
+        var content = '';
+        components.forEach(function(value) {
+            if (value.types.indexOf(type) != -1) {
+                content = value;
+            }
+        });
+
+        return content;
+    },
 
     setMasks: function() {
         Inputmask({mask: "(99) 9 9999-999[9]"}).mask('.phone');
@@ -31,14 +231,18 @@ var quickOrder = {
 
     declarations: function() {
         this.onBlurPhone();
+        this.onChangeState();
+        this.onChangeCity();
         this.onAddProduct();
         this.onRemoveProduct();
         this.onSubmit();
+        this.onCheckEnter();
         this.onBtnClear();
     },
 
     listProducts: function () {
         var self = this;
+        $(self.productsList).html('');
         $.ajax({
             url: APIURL + '/products',
             success: function(products) {
@@ -47,6 +251,80 @@ var quickOrder = {
                 });
             }
         })
+    },
+
+    listStates: function (activeId) {
+        var self = this;
+        $('#state option').not('[value=""]').remove();
+        $.ajax({
+            url: APIURL + '/states',
+            success: function(states) {
+                states.forEach(function(state) {
+                    $('#state').append('<option value="'+state.id+'" data-slug="'+state.slug+'">'+state.name+'</option>');
+                });
+
+                if (activeId) {
+                    self.canRefreshCity = false;
+                    $('#state').val(activeId).trigger('change');
+                }
+            }
+        })
+    },
+
+    listCities: function (stateId, activeId) {
+        var self = this;
+        $('#city option').not('[value=""]').remove();
+        $.ajax({
+            async: false,
+            url: APIURL + '/cities/byState/' + stateId,
+            success: function(cities) {
+                cities.forEach(function(city) {
+                    $('#city').append('<option value="'+city.id+'">'+city.name+'</option>');
+                });
+
+                if (activeId) {
+                    $('#city').val(activeId).trigger('change');
+                }
+            }
+        })
+    },
+
+    listNeighborhoods: function (cityId, activeId) {
+        var self = this;
+        $('#neighborhood option').not('[value=""]').remove();
+        $.ajax({
+            async: false,
+            url: APIURL + '/neighborhoods/byCity/' + cityId,
+            success: function(neighborhoods) {
+                neighborhoods.forEach(function(neighborhood) {
+                    $('#neighborhood').append('<option value="'+neighborhood.id+'">'+neighborhood.name+'</option>');
+                });
+
+                if (activeId) {
+                    $('#neighborhood').val(activeId).trigger('change');
+                }
+            }
+        })
+    },
+
+    onChangeState: function() {
+        var self = this;
+        $('#state').change(function() {
+            if (self.canRefreshCity) {
+                self.listCities($(this).val());
+            }
+            self.canRefreshCity = true;
+        });
+    },
+
+    onChangeCity: function() {
+        var self = this;
+        $('#city').change(function() {
+            if (self.canRefreshNeighborhood) {
+                self.listNeighborhoods($(this).val());
+            }
+            self.canRefreshNeighborhood = true;
+        });
     },
 
     onBtnClear: function() {
@@ -159,6 +437,10 @@ var quickOrder = {
 
     formValidate: function() {
         var phone_primary = document.querySelector("[name='phone_primary']");
+        var state = document.querySelector("[name='state']");
+        var city = document.querySelector("[name='city']");
+        var neighborhood = document.querySelector("[name='neighborhood']");
+        var number = document.querySelector("[name='number']");
         var adress = document.querySelector("[name='adress']");
         var products = this.getOrderProducts();
         var valid = true;
@@ -166,6 +448,30 @@ var quickOrder = {
         if (!Inputmask.isValid(phone_primary.value, { mask: "(99) 9 9999-999[9]"})) {
             console.log('Telefone primário inválido');
             phone_primary.classList.add('invalid');
+            valid = false;
+        }
+
+        if (!state.value.length) {
+            console.log('Estado inválido');
+            state.classList.add('invalid');
+            valid = false;
+        }
+
+        if (!city.value.length) {
+            console.log('Cidade inválida');
+            city.classList.add('invalid');
+            valid = false;
+        }
+
+        if (!neighborhood.value.length) {
+            console.log('Bairro inválido');
+            neighborhood.classList.add('invalid');
+            valid = false;
+        }
+
+        if (!number.value) {
+            console.log('Número inválido');
+            number.classList.add('invalid');
             valid = false;
         }
 
@@ -223,28 +529,41 @@ var quickOrder = {
         });
     },
 
+    onCheckEnter: function() {
+        $('form').keypress(function(e) {
+            e = e || event;
+            var txtArea = /textarea/i.test((e.target || e.srcElement).tagName);
+            return txtArea || (e.keyCode || e.which || e.charCode || 0) !== 13;
+        });
+    },
+
     onSubmit: function() {
         var self = this;
-        $("button[type=submit]").click(function (e) {
+        $("form button[type=submit]").click(function (e) {
             e.preventDefault();
 
             var order = self.getFormValues();
 
             if (self.formValidate()) {
                 console.log(order);
-                self.clearForm();
+
+                $("form button[type=submit]").attr('disabled', 'disabled');
 
                 $.ajax({
                     type: 'POST',
                     data: order,
                     url: APIURL + '/orders/quick',
                     success: function (response) {
+                        self.clearForm();
+                        self.listProducts();
                         console.log(response);
                         toastr.success('Pedido adicionado com sucesso!');
+                        $("form button[type=submit]").removeAttr('disabled');
                     },
                     error: function (err) {
                         console.log(err);
                         toastr.error('Ocorrreu algum problema no envio do pedido. Informe ao desenvolvedor do site');
+                        $("form button[type=submit]").removeAttr('disabled');
                     }
                 })
             } else {
@@ -253,12 +572,16 @@ var quickOrder = {
         });
     },
 
-
     getFormValues: function() {
         var form = {
             phone_primary: document.querySelector("[name='phone_primary']").inputmask.unmaskedvalue(),
             products: this.getOrderProducts(),
+            neighborhood_id: document.querySelector("[name='neighborhood']").value,
             adress: document.querySelector("[name='adress']").value,
+            full_adress: document.querySelector("[name='search']").value,
+            number: document.querySelector("[name='number']").value,
+            lat: window.lat,
+            long: window.long,
             name: document.querySelector("[name='name']").value,
             phone_secondary: document.querySelector("[name='phone_secondary']").inputmask.unmaskedvalue(),
             email: document.querySelector("[name='email']").value
@@ -268,5 +591,5 @@ var quickOrder = {
 };
 
 $(document).ready(function() {
-    quickOrder.init();
+    window.quickOrder.init();
 });
