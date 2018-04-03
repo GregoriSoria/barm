@@ -19,7 +19,8 @@ class CitiesController extends Controller
             'long_name' => 'required',
             'state_id' => 'required'
         ]);
-        $city = DB::select('SELECT * FROM cities WHERE lower(name) = ? LIMIT 1', [strtolower($request->input('long_name'))]);
+
+        $city = DB::select('SELECT * FROM cities WHERE lower(name) = "?" LIMIT 1', [strtolower($request->input('long_name'))]);
 
         if (count($city) == 0) {
             $city = new City();
@@ -32,6 +33,6 @@ class CitiesController extends Controller
             $city = $city[0];
         }
 
-        return new JsonResponse($city);
+        return new JsonResponse($city, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
     }
 }

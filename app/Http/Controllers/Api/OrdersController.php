@@ -70,6 +70,6 @@ class OrdersController extends Controller
         }
 
 
-        return new JsonResponse($order);
+        return new JsonResponse($order, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
     }
 }

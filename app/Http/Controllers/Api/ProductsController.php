@@ -10,10 +10,10 @@ use Illuminate\Http\Request;
 class ProductsController extends Controller
 {
     public function list(Request $request) {
-        return new JsonResponse(Product::all());
+        return new JsonResponse(Product::all(), 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
     }
 
     public function find(Request $request, $id) {
-        return new JsonResponse(Product::find($id));
+        return new JsonResponse(Product::find($id), 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
     }
 }

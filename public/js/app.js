@@ -2035,6 +2035,7 @@ window.quickOrder = {
                 $.ajax({
                     async: false,
                     type: 'POST',
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                     url: APIURL + '/states',
                     data: state,
                     success: function success(state) {
@@ -2066,6 +2067,7 @@ window.quickOrder = {
                 $.ajax({
                     async: false,
                     type: 'POST',
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                     url: APIURL + '/cities',
                     data: city,
                     success: function success(city) {
@@ -2097,6 +2099,7 @@ window.quickOrder = {
                 $.ajax({
                     async: false,
                     type: 'POST',
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                     url: APIURL + '/neighborhoods',
                     data: neighborhood,
                     success: function success(neighborhood) {
@@ -2471,6 +2474,7 @@ window.quickOrder = {
                 $.ajax({
                     type: 'POST',
                     data: order,
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                     url: APIURL + '/orders/quick',
                     success: function success(response) {
                         self.clearForm();

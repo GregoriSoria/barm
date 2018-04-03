@@ -19,7 +19,7 @@ class StatesController extends Controller
             'long_name' => 'required',
             'short_name' => 'required'
         ]);
-        $state = DB::select('SELECT * FROM states WHERE lower(name) = ? LIMIT 1', [strtolower($request->input('long_name'))]);
+        $state = DB::select('SELECT * FROM states WHERE lower(name) = "?" LIMIT 1', [strtolower($request->input('long_name'))]);
 
         if (count($state) == 0) {
             $state = new State();
@@ -32,6 +32,6 @@ class StatesController extends Controller
             $state = $state[0];
         }
 
-        return new JsonResponse($state);
+        return new JsonResponse($state, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
     }
 }

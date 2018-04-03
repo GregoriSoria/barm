@@ -20,7 +20,7 @@ class NeighborhoodsController extends Controller
             'long_name' => 'required',
             'city_id' => 'required'
         ]);
-        $neighborhood = DB::select('SELECT * FROM neighborhoods WHERE lower(name) = ? LIMIT 1', [strtolower($request->input('long_name'))]);
+        $neighborhood = DB::select('SELECT * FROM neighborhoods WHERE lower(name) = "?" LIMIT 1', [strtolower($request->input('long_name'))]);
 
         if (count($neighborhood) == 0) {
             $neighborhood = new Neighborhood();
@@ -33,6 +33,6 @@ class NeighborhoodsController extends Controller
             $neighborhood = $neighborhood[0];
         }
 
-        return new JsonResponse($neighborhood);
+        return new JsonResponse($neighborhood, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
     }
 }
