@@ -14,16 +14,21 @@ use Illuminate\Http\Request;
 class OrdersController extends Controller
 {
     public function quick(Request $request) {
-        $customer = Customer::where('phone_primary', $request->input('phone_primary'))->first();
+        $customer = Customer::where('phone_primary', $request->input('phone_primary'))->orWhere('phone_secondary', $request->input('phone_primary'))->first();
 
         if (!$customer) {
             $customer = new Customer;
         }
 
+        $phone1 = $request->input('phone_primary');
+        $phone2 = $request->input('phone_secondary');
+
         $customer->name = $request->input('name');
         $customer->email = $request->input('email');
-        $customer->phone_primary = $request->input('phone_primary');
-        $customer->phone_secondary = $request->input('phone_secondary');
+        if ($phone1 && $phone2 && $phone1 != $phone2) {
+            $customer->phone_primary = $phone1;
+        }
+        $customer->phone_secondary = $phone2;
 
         $customer->saveOrFail();
 

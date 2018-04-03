@@ -44,11 +44,15 @@ window.quickOrder = {
         this.searchBox.addListener('places_changed', function() {
             var places = self.searchBox.getPlaces();
 
-
             if (places.length == 0) {
                 return;
             }
+
             console.log('PLACE', places[0]);
+            if (!places[0].address_components) {
+                $('#search').val(places[0].name);
+                return;
+            }
             self.setPlaces(places[0]);
 
             // Clear out the old markers.
@@ -111,6 +115,24 @@ window.quickOrder = {
         window.long = self.adress.long;
         document.getElementById('adress').value = self.adress.street.long_name;
         $('#number').focus();
+    },
+
+    setCenterMap: function(coordinates) {
+        window.lat = coordinates.lat;
+        window.lng = coordinates.lng;
+        this.map.setCenter(coordinates);
+        this.map.setZoom(16);
+
+        this.markers.forEach(function(marker) {
+            marker.setMap(null);
+        });
+
+        this.markers[0] = new google.maps.Marker({
+            map: this.map,
+            icon: '',
+            title: '',
+            position: coordinates
+        });
     },
 
     setState: function(state) {
@@ -274,37 +296,41 @@ window.quickOrder = {
     listCities: function (stateId, activeId) {
         var self = this;
         $('#city option').not('[value=""]').remove();
-        $.ajax({
-            async: false,
-            url: APIURL + '/cities/byState/' + stateId,
-            success: function(cities) {
-                cities.forEach(function(city) {
-                    $('#city').append('<option value="'+city.id+'">'+city.name+'</option>');
-                });
+        if (stateId) {
+            $.ajax({
+                async: false,
+                url: APIURL + '/cities/byState/' + stateId,
+                success: function(cities) {
+                    cities.forEach(function(city) {
+                        $('#city').append('<option value="'+city.id+'">'+city.name+'</option>');
+                    });
 
-                if (activeId) {
-                    $('#city').val(activeId).trigger('change');
+                    if (activeId) {
+                        $('#city').val(activeId).trigger('change');
+                    }
                 }
-            }
-        })
+            });
+        }
     },
 
     listNeighborhoods: function (cityId, activeId) {
         var self = this;
         $('#neighborhood option').not('[value=""]').remove();
-        $.ajax({
-            async: false,
-            url: APIURL + '/neighborhoods/byCity/' + cityId,
-            success: function(neighborhoods) {
-                neighborhoods.forEach(function(neighborhood) {
-                    $('#neighborhood').append('<option value="'+neighborhood.id+'">'+neighborhood.name+'</option>');
-                });
+        if (cityId) {
+            $.ajax({
+                async: false,
+                url: APIURL + '/neighborhoods/byCity/' + cityId,
+                success: function(neighborhoods) {
+                    neighborhoods.forEach(function(neighborhood) {
+                        $('#neighborhood').append('<option value="'+neighborhood.id+'">'+neighborhood.name+'</option>');
+                    });
 
-                if (activeId) {
-                    $('#neighborhood').val(activeId).trigger('change');
+                    if (activeId) {
+                        $('#neighborhood').val(activeId).trigger('change');
+                    }
                 }
-            }
-        })
+            });
+        }
     },
 
     onChangeState: function() {
@@ -497,7 +523,12 @@ window.quickOrder = {
     clearForm: function() {
         this.clearOrderProducts();
         document.querySelector("[name='phone_primary']").value = '';
+        $("[name='neighborhood']").val('').trigger('change');
+        $("[name='city']").val('').trigger('change');
+        $("[name='state']").val('').trigger('change');
         document.querySelector("[name='adress']").value = '';
+        document.querySelector("[name='number']").value = '';
+        document.querySelector("[name='search']").value = '';
         document.querySelector("[name='name']").value = '';
         document.querySelector("[name='phone_secondary']").value = '';
         document.querySelector("[name='email']").value = '';
@@ -514,17 +545,21 @@ window.quickOrder = {
                     type: 'GET',
                     url: APIURL + '/customers/byPhone/' + phone_primary.inputmask.unmaskedvalue(),
                     success: function (customer) {
-                        document.querySelector("[name='adress']").value = customer.adress;
                         document.querySelector("[name='name']").value = customer.name;
                         document.querySelector("[name='phone_secondary']").value = customer.phone_secondary;
                         document.querySelector("[name='email']").value = customer.email;
+                        $("[name='state']").val(customer.adress.state.id).trigger('change');
+                        $("[name='city']").val(customer.adress.city.id).trigger('change');
+                        $("[name='neighborhood']").val(customer.adress.neighborhood.id).trigger('change');
+                        $("[name='adress']").val(customer.adress.adress);
+                        $("[name='number']").val(customer.adress.number);
+                        $("[name='search']").val(customer.adress.full_adress);
+                        self.setCenterMap({lat: parseFloat(customer.adress.lat), lng: parseFloat(customer.adress.long)});
                     },
                     error: function (err) {
                         console.log(err);
                     }
                 });
-            } else {
-                console.log('ué');
             }
         });
     },
