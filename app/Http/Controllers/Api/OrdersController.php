@@ -50,7 +50,7 @@ class OrdersController extends Controller
         $order->adress_id = $adress->id;
         $order->adress = $request->input('adress');
         $order->employee_id = 1;
-        $order->status = "FAZENDO";
+        $order->status = "APROVADO";
 
         $order->save();
 
