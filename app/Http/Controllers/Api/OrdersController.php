@@ -25,6 +25,8 @@ class OrdersController extends Controller
 
         $customer->name = $request->input('name');
         $customer->email = $request->input('email');
+        $customer->birth = $request->input('birth');
+        $customer->cpf = $request->input('cpf');
         if ($phone1 && $phone2 && $phone1 != $phone2) {
             $customer->phone_primary = $phone1;
         }

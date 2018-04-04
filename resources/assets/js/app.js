@@ -1,11 +1,13 @@
 window.$ = window.jQuery = require('jquery');
 var Inputmask = require('inputmask');
+window.moment = require('moment');
 
 var APIURL = '/admin/api';
 
 window.quickOrder = {
     init: function() {
         console.log('QuickOrder!');
+        moment.locale('pt-br');
         this.setMasks();
         this.declarations();
         this.listProducts();
@@ -29,6 +31,9 @@ window.quickOrder = {
     startMaps: function() {
         var self = this;
         var porto_alegre = {lat: (window.lat ? window.lat :-30.0426525), lng: (window.lang ? window.lang : -51.1816439)};
+        if (!window.google) {
+            setTimeout(function(){}, 1000);
+        }
         this.map = new google.maps.Map(document.getElementById('map'), {
             center: porto_alegre,
             zoom: 12,
@@ -243,15 +248,17 @@ window.quickOrder = {
 
     setMasks: function() {
         Inputmask({mask: "(99) 9 9999-999[9]"}).mask('.phone');
-        Inputmask({mask: "*{1,20}[.*{1,20}][.*{1,20}][.*{1,20}]@*{1,20}[.*{2,6}][.*{1,2}]"}).mask('.email');
+        Inputmask({alias: "email"}).mask('.email');
+        Inputmask({alias: "date", inputFormat: "dd/mm/yyyy", placeholder: "dd/mm/aaaa", clearIncomplete: true}).mask('.birth');
+        Inputmask({mask: "999.999.999-99", clearIncomplete: true}).mask('.cpf');
     },
 
-    setProductListItem: function(quantity, id, name, value) {
-        return '<a href="#" ondragstart="return false;" class="list-group-item list-group-item-action" '+(quantity > 0 ? '': 'disabled="disabled"')+' data-id="'+id+'" data-quantity="'+quantity+'" data-value="'+value+'"><span class="name">'+name+'</span><i class="voyager-plus"></i><span class="badge badge-primary badge-pill">'+quantity+'</span></a>';
+    setProductListItem: function(quantity, id, name, value, bg) {
+        return '<a href="#" ondragstart="return false;" class="list-group-item list-group-item-action" '+(quantity > 0 ? '': 'disabled="disabled"')+' data-id="'+id+'" data-quantity="'+quantity+'" data-value="'+value+'" style="background-color: '+(bg ? bg : '#FFF')+';"><span class="name">'+name+'</span><i class="voyager-plus"></i><span class="badge badge-primary badge-pill">'+quantity+'</span></a>';
     },
 
-    setOrderProductListItem: function(quantity, id, name, value) {
-        return '<a href="#" ondragstart="return false;" class="list-group-item list-group-item-action" data-id="'+id+'" data-quantity="'+quantity+'" data-value="'+value+'"><span class="name">'+name+'</span><i class="voyager-x"></i><span class="badge badge-primary badge-pill">'+quantity+'</span></a>';
+    setOrderProductListItem: function(quantity, id, name, value, bg) {
+        return '<a href="#" ondragstart="return false;" class="list-group-item list-group-item-action" data-id="'+id+'" data-quantity="'+quantity+'" data-value="'+value+'" style="background-color: '+(bg ? bg :'#FFF')+' "><span class="name">'+name+'</span><i class="voyager-x"></i><span class="badge badge-primary badge-pill">'+quantity+'</span></a>';
     },
 
     declarations: function() {
@@ -272,7 +279,7 @@ window.quickOrder = {
             url: APIURL + '/products',
             success: function(products) {
                 products.forEach(function(product) {
-                    $(self.productsList).append(self.setProductListItem(product.quantity, product.id, product.name, product.value));
+                    $(self.productsList).append(self.setProductListItem(product.quantity, product.id, product.name, product.value, product.color));
                 });
             }
         })
@@ -371,6 +378,7 @@ window.quickOrder = {
 
             var id = $(this).data('id'),
                 name = $(this).find('span').html(),
+                bg = $(this).css('background-color'),
                 value = $(this).data('value');
 
             var quantity = document.querySelector(self.productsListItem+'[data-id="'+id+'"]').getAttribute('data-quantity')-1;
@@ -389,7 +397,7 @@ window.quickOrder = {
                 document.querySelector(self.orderProductsListItem+'[data-id="'+id+'"]').setAttribute('data-quantity', orderProductQuantity.toString());
                 document.querySelector(self.orderProductsListItem+'[data-id="'+id+'"] .badge').innerHTML = orderProductQuantity;
             } else {
-                document.querySelector(self.orderProductsList).innerHTML += self.setOrderProductListItem(1, id, name, value);
+                document.querySelector(self.orderProductsList).innerHTML += self.setOrderProductListItem(1, id, name, value, bg);
             }
 
             document.querySelector('.panel.pedido').classList.remove('invalid');
@@ -542,29 +550,46 @@ window.quickOrder = {
     onBlurPhone: function () {
         var self = this;
         $('[name=phone_primary]').blur(function() {
-            var phone_primary = document.querySelector("[name='phone_primary']");
-            if (Inputmask.isValid(phone_primary.value, { mask: "(99) 9 9999-999[9]"})) {
-                $.ajax({
-                    type: 'GET',
-                    url: APIURL + '/customers/byPhone/' + phone_primary.inputmask.unmaskedvalue(),
-                    success: function (customer) {
-                        document.querySelector("[name='name']").value = customer.name;
-                        document.querySelector("[name='phone_secondary']").value = customer.phone_secondary;
-                        document.querySelector("[name='email']").value = customer.email;
-                        $("[name='state']").val(customer.adress.state.id).trigger('change');
-                        $("[name='city']").val(customer.adress.city.id).trigger('change');
-                        $("[name='neighborhood']").val(customer.adress.neighborhood.id).trigger('change');
-                        $("[name='adress']").val(customer.adress.adress);
-                        $("[name='number']").val(customer.adress.number);
-                        $("[name='search']").val(customer.adress.full_adress);
-                        self.setCenterMap({lat: parseFloat(customer.adress.lat), lng: parseFloat(customer.adress.long)});
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
-            }
+            self.setUser();
         });
+    },
+
+    setUser: function() {
+        var self = this;
+        var phone_primary = document.querySelector("[name='phone_primary']");
+        if (Inputmask.isValid(phone_primary.value, { mask: "(99) 9 9999-999[9]"})) {
+            $.ajax({
+                type: 'GET',
+                url: APIURL + '/customers/byPhone/' + phone_primary.inputmask.unmaskedvalue(),
+                success: function (customer) {
+                    if (customer) {
+                        document.querySelector("[name='name']").value = (customer.name ? customer.name : '');
+                        document.querySelector("[name='phone_secondary']").value = (customer.phone_secondary ? customer.phone_secondary : '');
+                        document.querySelector("[name='email']").value = (customer.email ? customer.email : '');
+                        document.querySelector("[name='birth']").value = (customer.birth ? moment(customer.birth).format('L') : '');
+                        document.querySelector("[name='cpf']").value = (customer.cpf ? customer.cpf : '');
+
+                        if (customer.adress) {
+                            $("[name='state']").val(customer.adress.state ? customer.adress.state.id : '').trigger('change');
+                            $("[name='city']").val(customer.adress.city ? customer.adress.city.id : '').trigger('change');
+                            $("[name='neighborhood']").val(customer.adress.neighborhood ? customer.adress.neighborhood.id : '').trigger('change');
+                            $("[name='adress']").val(customer.adress.adress ? customer.adress.adress : '');
+                            $("[name='number']").val(customer.adress.number ? customer.adress.number : '');
+                            $("[name='search']").val(customer.adress.full_adress ? customer.adress.full_adress : '');
+                            if (customer.adress.lat && customer.adress.long) {
+                                self.setCenterMap({lat: parseFloat(customer.adress.lat), lng: parseFloat(customer.adress.long)});
+                            }
+                        }
+                    } else {
+                        toastr.warning('Telefone do Cliente não encontrado. Finalize o pedido com os dados abaixo para cadastrá-lo');
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    toastr.warning('Telefone do Cliente não encontrado. Finalize o pedido com os dados abaixo para cadastrá-lo');
+                }
+            });
+        }
     },
 
     onCheckEnter: function() {
@@ -623,7 +648,9 @@ window.quickOrder = {
             long: window.long,
             name: document.querySelector("[name='name']").value,
             phone_secondary: document.querySelector("[name='phone_secondary']").inputmask.unmaskedvalue(),
-            email: document.querySelector("[name='email']").value
+            email: document.querySelector("[name='email']").value,
+            cpf: document.querySelector("[name='cpf']").inputmask.unmaskedvalue(),
+            birth: moment(document.querySelector("[name='birth']").value, 'DD-MM-YYYY').format('YYYY-MM-DD')
         };
         return form;
     }

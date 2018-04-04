@@ -18,6 +18,7 @@
         "lodash": "^4.17.4"
     },
     "dependencies": {
-        "inputmask": "^3.3.11"
+        "inputmask": "^3.3.11",
+        "moment": "^2.22.0"
     }
 }

@@ -24,9 +24,86 @@
                             </h3>
                         </div>
                         <div class="panel-body">
-                            <input type="tel" class="form-control phone" required min="15" max="16" id="phone_primary" name="phone_primary" placeholder="Telefone">
+                            <div class="form-group icon-voyager-search">
+                                <label for="phone_primary">Telefone</label>
+                                <input type="tel" class="form-control phone" required min="15" max="16" id="phone_primary" name="phone_primary" placeholder="Telefone">
+                            </div>
                         </div>
                     </div>
+
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><i class="icon wb-book"></i> Informações do Cliente</h3>
+                            <div class="panel-actions">
+                                <a class="panel-action voyager-angle-down" data-toggle="panel-collapse" aria-hidden="true"></a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group icon-voyager-search">
+                                <label for="search">Procurar endereço</label>
+                                <input type="text" class="form-control" required id="search" name="search" placeholder="Procurar endereço" maxlength="80">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="state">Estado</label>
+                                <select class="form-control select2" required name="state" id="state">
+                                    <option value="">Selecione um Estado</option>
+                                    <option value="1">Rio Grande do Sul</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="city">Cidade</label>
+                                <select class="form-control select2" required name="city" id="city">
+                                    <option value="">Selecione uma Cidade</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="neighborhood">Bairro</label>
+                                <select class="form-control select2" required name="neighborhood" id="neighborhood">
+                                    <option value="">Selecione um Bairro</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="adress">Endereço</label>
+                                <input type="text" class="form-control" required id="adress" name="adress" placeholder="Endereço" maxlength="80">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="number">Número</label>
+                                <input type="text" class="form-control" required id="number" name="number" placeholder="Número" maxlength="30">
+                            </div>
+
+                            <div id="map"></div>
+
+                            <div class="form-group">
+                                <label for="name">Nome</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Nome" maxlength="60">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phone_secondary">Telefon secundário</label>
+                                <input type="tel" class="form-control phone" id="phone_secondary" name="phone_secondary" placeholder="Telefone secundário">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control email" id="email" name="email" placeholder="Email">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="birth">Data de nascimento</label>
+                                <input type="tel" class="form-control birth" id="birth" name="birth" placeholder="Data de nascimento">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cpf">CPF</label>
+                                <input type="tel" class="form-control cpf" id="cpf" name="cpf" placeholder="CPF">
+                            </div>
+                        </div>
+                    </div><!-- .panel -->
 
                     <div class="panel">
                         <div class="panel-heading">
@@ -38,63 +115,8 @@
 
                         <div class="panel-body">
                             <div><label for="name">Produtos</label></div>
-                            <div class="products-list list-group col-md-5">
+                            <div class="products-list list-group col-md-6">
 
-                            </div>
-                        </div>
-                    </div><!-- .panel -->
-
-                    <div class="panel">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"><i class="icon wb-book"></i> Informações do Cliente</h3>
-                            <div class="panel-actions">
-                                <a class="panel-action voyager-angle-down" data-toggle="panel-collapse" aria-hidden="true"></a>
-                            </div>
-                        </div>
-                        <div class="panel-body">
-                            <div class="form-group">
-                                <select class="form-control select2" required name="state" id="state">
-                                    <option value="">Selecione um Estado</option>
-                                    <option value="1">Rio Grande do Sul</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <select class="form-control select2" required name="city" id="city">
-                                    <option value="">Selecione uma Cidade</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <select class="form-control select2" required name="neighborhood" id="neighborhood">
-                                    <option value="">Selecione um Bairro</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <input type="text" class="form-control" required id="adress" name="adress" placeholder="Endereço" maxlength="80">
-                            </div>
-
-                            <div class="form-group">
-                                <input type="text" class="form-control" required id="number" name="number" placeholder="Número" maxlength="30">
-                            </div>
-
-                            <div class="form-group">
-                                <input type="text" class="form-control" required id="search" name="search" placeholder="Procurar endereço" maxlength="80">
-                            </div>
-
-                            <div id="map"></div>
-
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Nome" maxlength="60">
-                            </div>
-
-                            <div class="form-group">
-                                <input type="tel" class="form-control phone" id="phone_secondary" name="phone_secondary" placeholder="Telefone secundário">
-                            </div>
-
-                            <div class="form-group">
-                                <input type="email" class="form-control email" id="email" name="email" placeholder="Email">
                             </div>
                         </div>
                     </div><!-- .panel -->
@@ -126,5 +148,5 @@
 @endsection
 
 <script type="text/javascript" src="{{ asset(env('APP_URL', '') . '/js/app.js') }}"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{setting('site.googlemapskey')}}&libraries=places" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{setting('site.googlemapskey')}}&libraries=places" defer></script>
 

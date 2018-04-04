@@ -37,6 +37,15 @@ class CustomersController extends Controller
             }
         }
 
-        return new JsonResponse($customer?: [], 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
+        if ($customer) {
+            return new JsonResponse($customer, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
+        } else {
+            return new JsonResponse([
+                'error' => [
+                    'message' => 'Cliente não encontrado'
+                ]
+            ], 204, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
+        }
+
     }
 }
