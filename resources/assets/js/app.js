@@ -253,12 +253,12 @@ window.quickOrder = {
         Inputmask({mask: "999.999.999-99", clearIncomplete: true}).mask('.cpf');
     },
 
-    setProductListItem: function(quantity, id, name, value, bg) {
-        return '<a href="#" ondragstart="return false;" class="list-group-item list-group-item-action" '+(quantity > 0 ? '': 'disabled="disabled"')+' data-id="'+id+'" data-quantity="'+quantity+'" data-value="'+value+'" style="background-color: '+(bg ? bg : '#FFF')+';"><span class="name">'+name+'</span><i class="voyager-plus"></i><span class="badge badge-primary badge-pill">'+quantity+'</span></a>';
+    setProductListItem: function(quantity, id, name, value, bg, txtColor) {
+        return '<a href="#" ondragstart="return false;" class="list-group-item list-group-item-action" '+(quantity > 0 ? '': 'disabled="disabled"')+' data-id="'+id+'" data-quantity="'+quantity+'" data-value="'+value+'" style="background-color: '+(bg ? bg : '#FFF')+';"><span class="name" style="color: '+(txtColor ? txtColor :'#111')+' ">'+name+'</span><i class="voyager-plus"></i><span class="badge badge-primary badge-pill">'+quantity+'</span></a>';
     },
 
-    setOrderProductListItem: function(quantity, id, name, value, bg) {
-        return '<a href="#" ondragstart="return false;" class="list-group-item list-group-item-action" data-id="'+id+'" data-quantity="'+quantity+'" data-value="'+value+'" style="background-color: '+(bg ? bg :'#FFF')+' "><span class="name">'+name+'</span><i class="voyager-x"></i><span class="badge badge-primary badge-pill">'+quantity+'</span></a>';
+    setOrderProductListItem: function(quantity, id, name, value, bg, txtColor) {
+        return '<a href="#" ondragstart="return false;" class="list-group-item list-group-item-action" data-id="'+id+'" data-quantity="'+quantity+'" data-value="'+value+'" style="background-color: '+(bg ? bg :'#FFF')+' "><span class="name" style="color: '+(txtColor ? txtColor :'#111')+' ">'+name+'</span><i class="voyager-x"></i><span class="badge badge-primary badge-pill">'+quantity+'</span></a>';
     },
 
     declarations: function() {
@@ -279,7 +279,7 @@ window.quickOrder = {
             url: APIURL + '/products',
             success: function(products) {
                 products.forEach(function(product) {
-                    $(self.productsList).append(self.setProductListItem(product.quantity, product.id, product.name, product.value, product.color));
+                    $(self.productsList).append(self.setProductListItem(product.quantity, product.id, product.name, product.value, product.bg_color, product.text_color));
                 });
             }
         })
@@ -379,6 +379,7 @@ window.quickOrder = {
             var id = $(this).data('id'),
                 name = $(this).find('span').html(),
                 bg = $(this).css('background-color'),
+                txtColor = $(this).find('.name').css('background-color'),
                 value = $(this).data('value');
 
             var quantity = document.querySelector(self.productsListItem+'[data-id="'+id+'"]').getAttribute('data-quantity')-1;
@@ -397,7 +398,7 @@ window.quickOrder = {
                 document.querySelector(self.orderProductsListItem+'[data-id="'+id+'"]').setAttribute('data-quantity', orderProductQuantity.toString());
                 document.querySelector(self.orderProductsListItem+'[data-id="'+id+'"] .badge').innerHTML = orderProductQuantity;
             } else {
-                document.querySelector(self.orderProductsList).innerHTML += self.setOrderProductListItem(1, id, name, value, bg);
+                document.querySelector(self.orderProductsList).innerHTML += self.setOrderProductListItem(1, id, name, value, bg, txtColor);
             }
 
             document.querySelector('.panel.pedido').classList.remove('invalid');
