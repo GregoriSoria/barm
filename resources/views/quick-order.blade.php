@@ -1,3 +1,5 @@
+<?php $dataType = new stdClass(); $dataType->slug = 'quick-order'; ?>
+
 @extends('voyager::master')
 
 <link rel="stylesheet" href="{{ asset(env('APP_URL', '') . '/css/app.css') }}">

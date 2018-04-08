@@ -48,5 +48,6 @@ Route::group(['namespace' => 'Api', 'prefix' => 'api'], function () {
 
     Route::group(['prefix' => 'orders'], function () {
         Route::post('/quick', 'OrdersController@quick');
+        Route::get('/list', 'OrdersController@list');
     });
 });

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Adress;
+use App\City;
 use App\Customer;
 use App\Http\Controllers\Controller;
+use App\Neighborhood;
 use App\Order;
 use App\OrderProduct;
 use App\Product;
@@ -73,5 +75,23 @@ class OrdersController extends Controller
 
 
         return new JsonResponse($order, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
+    }
+
+    public function list(Request $request) {
+        $orders = Order::all();
+
+        foreach ($orders as $order) {
+            $order_products = OrderProduct::where('order_id', $order->id)->get();
+            foreach ($order_products as $order_product) {
+                $order_product->product = Product::find($order_product->product_id);
+            }
+            $order->order_products = $order_products;
+
+            $order->adress = Adress::find($order->adress_id);
+            $order->adress->neighborhood = Neighborhood::find($order->adress->neighborhood_id);
+            $order->adress->city = City::find($order->adress->neighborhood->city_id);
+        }
+
+        return new JsonResponse($orders, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
     }
 }

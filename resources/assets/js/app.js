@@ -1,13 +1,13 @@
 window.$ = window.jQuery = require('jquery');
 var Inputmask = require('inputmask');
 window.moment = require('moment');
+moment.locale('pt-br');
 
 var APIURL = '/admin/api';
 
 window.quickOrder = {
     init: function() {
         console.log('QuickOrder!');
-        moment.locale('pt-br');
         this.setMasks();
         this.declarations();
         this.listProducts();
@@ -379,7 +379,7 @@ window.quickOrder = {
             var id = $(this).data('id'),
                 name = $(this).find('span').html(),
                 bg = $(this).css('background-color'),
-                txtColor = $(this).find('.name').css('background-color'),
+                txtColor = $(this).find('.name').css('color'),
                 value = $(this).data('value');
 
             var quantity = document.querySelector(self.productsListItem+'[data-id="'+id+'"]').getAttribute('data-quantity')-1;
@@ -657,6 +657,106 @@ window.quickOrder = {
     }
 };
 
+window.orders = {
+    init: function() {
+        console.log('Orders!');
+        this.getOrders();
+        this.declarations();
+    },
+
+    orders: [],
+
+    declarations: function() {
+        this.onClickCard();
+    },
+
+    getOrders: function() {
+        var self = this;
+        $.ajax({
+            url: APIURL + '/orders/list',
+            success: function(orders) {
+                if (orders) {
+                    self.orders = orders;
+                    orders.forEach(function(order) {
+                        self.insertOrder(order);
+                    });
+                }
+            }
+        });
+    },
+
+    getOrderById: function(id) {
+        var selectedOrder = false;
+        this.orders.forEach(function(order) {
+           if (order.id == id) {
+               selectedOrder = order;
+           }
+        });
+        return selectedOrder;
+    },
+
+    getOrderItens: function(order) {
+        var items = '';
+        var total = 0.00;
+        order.order_products.forEach(function(product) {
+            var id = product.product.id,
+                name = product.product.name,
+                quantity = parseInt(product.quantity),
+                value = parseFloat(product.product.value).toFixed(2).replace('.',',');
+
+            total += parseFloat(product.product.value)*quantity;
+
+            items += '<li data-id="'+id+'">x'+quantity+' '+name+' R$ '+value+'</li>'
+        });
+
+        return {list: items, total: total};
+    },
+
+    insertOrder: function(order) {
+        var $card = $('.card.sample').clone().removeClass('sample').css('display', 'inline-block');
+        $card.attr('data-status', order.status.toLowerCase());
+        $card.attr('data-id', order.id);
+        $card.find('.card-header .card-title').html('Pedido Nº <b>' + order.id + '</b>');
+
+        var items = this.getOrderItens(order);
+        $card.find('.card-body .items').html(items.list);
+        $card.find('.card-body .total').html('Total: R$ ' + parseFloat(items.total).toFixed(2).replace('.',','));
+
+        $('#orders').append($card);
+    },
+
+    setCardModalOrder: function(order) {
+        $('#city').val(order.adress.city.name);
+        $('#neighborhood').val(order.adress.neighborhood.name);
+        $('#street').val(order.adress.adress);
+        $('#number').val(order.adress.number);
+        $('#complement').val('');
+        var items = this.getOrderItens(order);
+        $('#items').html(items.list);
+        $('#total').val('R$ ' + parseFloat(items.total).toFixed(2).replace('.',','));
+        $('#status').val(order.status).trigger('change');
+    },
+
+    onClickCard: function() {
+        var self = this;
+        $(document).on('click', '.card', function() {
+            var order = self.getOrderById($(this).data('id'));
+            console.log(order);
+
+            if (order) {
+                self.setCardModalOrder(order);
+                $('#cardModal').modal('show');
+            }
+        });
+    }
+};
+
 $(document).ready(function() {
-    window.quickOrder.init();
+    if ($('body').hasClass('quick-order')) {
+        window.quickOrder.init();
+    }
+
+    if ($('body').hasClass('orders')) {
+        window.orders.init();
+    }
 });

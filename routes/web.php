@@ -19,6 +19,10 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/quick-order', function () {
             return view('quick-order');
         });
+
+        Route::get('/pedidos', function () {
+            return view('orders');
+        });
     });
 });
 
