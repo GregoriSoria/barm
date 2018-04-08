@@ -7,6 +7,7 @@
     display: inline-block;
     margin-right: 20px;
     margin-top: 30px;
+    color: #FFF;
     box-shadow: 1px 1px 3px rgba(0,0,0,.3);
     cursor: pointer;
     transform: scale(1);
@@ -29,23 +30,19 @@
     }
 
     &[data-status="aprovado"] {
-      color: #D8000C;
-      background-color: #FFD2D2;
+      background-color: #F2435C;
     }
 
     &[data-status="producao"] {
-      color: #9F6000;
-      background-color: #FEEFB3;
+      background-color: #FABE28;
     }
 
     &[data-status="expedido"] {
-      color: #00529B;
-      background-color: #BDE5F8;
+      background-color: #22A7F0;
     }
 
     &[data-status="entregue"] {
-      color: #4F8A10;
-      background-color: #DFF2BF;
+      background-color: #1ABC9C;
     }
   }
 }

@@ -33,31 +33,36 @@
                     <h4 class="modal-title"><i class="voyager-window-list"></i><span class="order">Pedido N º </span></h4>
                 </div>
 
-                <div class="modal-body">
+                <div class="modal-body" data-id="">
                     <div class="row">
-                        <div class="col-md-12 relationship_details">
-                            <p class="relationship_table_select">Cidade</p>
-                            <input type="text" class="form-control" readonly required id="city" name=city" maxlength="80">
-                        </div>
+                        <div class="col-md-12 relationship_details_more">
+                            <div class="well">
+                                <label>Endereço</label>
+                                <div class="relationship_details">
+                                    <p class="relationship_table_select">Cidade</p>
+                                    <input type="text" class="form-control" readonly required id="city" name=city" maxlength="80">
+                                </div>
 
-                        <div class="col-md-12 relationship_details">
-                            <p class="relationship_table_select">Bairro</p>
-                            <input type="text" class="form-control" readonly required id="neighborhood" name="neighborhood" maxlength="80">
-                        </div>
+                                <div class="relationship_details">
+                                    <p class="relationship_table_select">Bairro</p>
+                                    <input type="text" class="form-control" readonly required id="neighborhood" name="neighborhood" maxlength="80">
+                                </div>
 
-                        <div class="col-md-12 relationship_details">
-                            <p class="relationship_table_select">Rua</p>
-                            <input type="text" class="form-control" readonly required id="street" name="street" maxlength="80">
-                        </div>
+                                <div class="relationship_details">
+                                    <p class="relationship_table_select">Rua</p>
+                                    <input type="text" class="form-control" readonly required id="street" name="street" maxlength="80">
+                                </div>
 
-                        <div class="col-md-12 relationship_details">
-                            <p class="relationship_table_select">Número</p>
-                            <input type="text" class="form-control" readonly required id="number" name="number" maxlength="80">
-                        </div>
+                                <div class="relationship_details">
+                                    <p class="relationship_table_select">Número</p>
+                                    <input type="text" class="form-control" readonly required id="number" name="number" maxlength="80">
+                                </div>
 
-                        <div class="col-md-12 relationship_details">
-                            <p class="relationship_table_select">Complemento</p>
-                            <input type="text" class="form-control" readonly required id="complement" name="complement" maxlength="80">
+                                <div class="relationship_details">
+                                    <p class="relationship_table_select">Complemento</p>
+                                    <input type="text" class="form-control" readonly required id="complement" name="complement" maxlength="80">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="col-md-12 relationship_details_more">
@@ -66,10 +71,36 @@
                                 <div id="items"></div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-12 relationship_details">
                             <p class="relationship_table_select">Total</p>
                             <input type="text" class="form-control" readonly required id="total" name="total" value="R$ 0,00" maxlength="80">
+                        </div>
+
+                        <div class="col-md-12 relationship_details_more">
+                            <div class="well">
+                                <label>Cliente</label>
+
+                                <div class="relationship_details">
+                                    <p class="relationship_table_select">Nome</p>
+                                    <input type="text" class="form-control" readonly required id="name" name="name" maxlength="80">
+                                </div>
+
+                                <div class="relationship_details">
+                                    <p class="relationship_table_select">Telefone Primário</p>
+                                    <input type="text" class="form-control" readonly required id="phone_primary" name="phone_primary" maxlength="80">
+                                </div>
+
+                                <div class="relationship_details">
+                                    <p class="relationship_table_select">Telefone Secundário</p>
+                                    <input type="text" class="form-control" readonly required id="phone_secondary" name="phone_secondary" maxlength="80">
+                                </div>
+
+                                <div class="relationship_details">
+                                    <p class="relationship_table_select">Email</p>
+                                    <input type="text" class="form-control" readonly required id="email" name="email" maxlength="80">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="col-md-12 relationship_details">
@@ -86,7 +117,7 @@
                 <div class="modal-footer">
                     <div class="relationship-btn-container">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                        <button class="btn btn-danger btn-relationship"><span>Salvar</span></button>
+                        <button id="modalSave" class="btn btn-danger btn-relationship"><span>Salvar</span></button>
                     </div>
                 </div>
             </div>

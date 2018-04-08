@@ -5,6 +5,16 @@ moment.locale('pt-br');
 
 var APIURL = '/admin/api';
 
+window.loader = {
+    active: function() {
+        $('#voyager-loader').css('display', 'block');
+    },
+
+    deactive: function() {
+        $('#voyager-loader').css('display', 'none');
+    }
+}
+
 window.quickOrder = {
     init: function() {
         console.log('QuickOrder!');
@@ -660,7 +670,7 @@ window.quickOrder = {
 window.orders = {
     init: function() {
         console.log('Orders!');
-        this.getOrders();
+        this.getOrders(10);
         this.declarations();
     },
 
@@ -668,18 +678,22 @@ window.orders = {
 
     declarations: function() {
         this.onClickCard();
+        this.onSaveCard();
     },
 
-    getOrders: function() {
+    getOrders: function(limit) {
         var self = this;
+        window.loader.active();
+        $('.card:not(.sample)').remove();
         $.ajax({
-            url: APIURL + '/orders/list',
+            url: APIURL + '/orders/list' + (limit ? '/'+limit : ''),
             success: function(orders) {
                 if (orders) {
                     self.orders = orders;
                     orders.forEach(function(order) {
                         self.insertOrder(order);
                     });
+                    window.loader.deactive();
                 }
             }
         });
@@ -726,6 +740,8 @@ window.orders = {
     },
 
     setCardModalOrder: function(order) {
+        $('#cardModal .modal-title .order').html('Pedido Nº ' + order.id);
+        $('#cardModal').attr('data-id', order.id);
         $('#city').val(order.adress.city.name);
         $('#neighborhood').val(order.adress.neighborhood.name);
         $('#street').val(order.adress.adress);
@@ -734,7 +750,29 @@ window.orders = {
         var items = this.getOrderItens(order);
         $('#items').html(items.list);
         $('#total').val('R$ ' + parseFloat(items.total).toFixed(2).replace('.',','));
+        $('#name').val(order.customer.name);
+        $('#phone_primary').val(order.customer.phone_primary);
+        $('#phone_secondary').val(order.customer.phone_secondary);
+        $('#email').val(order.customer.email);
         $('#status').val(order.status).trigger('change');
+
+        $('#cardModal').removeClass('modal-danger modal-warning modal-info modal-success');
+        switch (order.status) {
+            case 'APROVADO':
+                $('#cardModal').addClass('modal-danger');
+                break;
+            case 'PRODUCAO':
+                $('#cardModal').addClass('modal-warning');
+                break;
+            case 'EXPEDIDO':
+                $('#cardModal').addClass('modal-info');
+                break;
+            case 'ENTREGUE':
+                $('#cardModal').addClass('modal-success');
+                break;
+            default:
+                $('#cardModal').addClass('modal-danger');
+        }
     },
 
     onClickCard: function() {
@@ -746,6 +784,27 @@ window.orders = {
             if (order) {
                 self.setCardModalOrder(order);
                 $('#cardModal').modal('show');
+            }
+        });
+    },
+
+    onSaveCard: function() {
+        var self = this;
+        $('#modalSave').click(function () {
+            var id = $('#cardModal').data('id'),
+                status = $('#cardModal #status').val();
+
+            if (id && status) {
+                $.ajax({
+                    type: 'PATCH',
+                    url: APIURL + '/orders/status',
+                    data: {id: id, status: status, _method: 'PATCH'},
+                    success: function(order) {
+                        $('#cardModal').modal('hide');
+                        self.getOrders(10);
+                        console.log('Status do Pedido ' + id + ' alterado para ' + order.status);
+                    }
+                });
             }
         });
     }

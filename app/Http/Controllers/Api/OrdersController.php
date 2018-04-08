@@ -36,7 +36,10 @@ class OrdersController extends Controller
 
         $customer->saveOrFail();
 
-        $adress = new Adress;
+        $adress = Adress::where('full_adress', $request->input('full_adress'))->where('customer_id', $customer->id)->first();
+        if (!$adress) {
+            $adress = new Adress;
+        }
         $adress->full_adress = $request->input('full_adress');
         $adress->adress = $request->input('adress');
         $adress->number = $request->input('number');
@@ -77,8 +80,14 @@ class OrdersController extends Controller
         return new JsonResponse($order, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
     }
 
-    public function list(Request $request) {
-        $orders = Order::all();
+    public function list(Request $request, $limit = 0) {
+        $orders = Order::orderBy('id', 'DESC');
+
+        if ($limit) {
+            $orders = $orders->take($limit)->get();
+        } else {
+            $orders = $orders->get();
+        }
 
         foreach ($orders as $order) {
             $order_products = OrderProduct::where('order_id', $order->id)->get();
@@ -87,11 +96,25 @@ class OrdersController extends Controller
             }
             $order->order_products = $order_products;
 
+            $order->customer = Customer::find($order->customer_id);
             $order->adress = Adress::find($order->adress_id);
             $order->adress->neighborhood = Neighborhood::find($order->adress->neighborhood_id);
             $order->adress->city = City::find($order->adress->neighborhood->city_id);
         }
 
         return new JsonResponse($orders, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
+    }
+
+    public function changeStatus(Request $request) {
+        $request->validate([
+            'id' => 'required',
+            'status' => 'required'
+        ]);
+
+        $order = Order::find($request->input('id'));
+        $order->status = $request->input('status');
+        $order->saveOrFail();
+
+        return new JsonResponse($order, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
     }
 }
