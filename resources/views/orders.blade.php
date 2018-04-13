@@ -104,6 +104,11 @@
                         </div>
 
                         <div class="col-md-12 relationship_details">
+                            <p class="relationship_table_select">Método de Pagamnto</p>
+                            <input type="text" class="form-control" readonly required id="paymentMethod" name="paymentMethod" maxlength="80">
+                        </div>
+
+                        <div class="col-md-12 relationship_details">
                             <p class="relationship_table_select">Status</p>
                             <select class="relationship_type select2 select2-hidden-accessible" id="status" name="status" tabindex="-1" aria-hidden="true">
                                 <option value="APROVADO">PEDIDO APROVADO</option>

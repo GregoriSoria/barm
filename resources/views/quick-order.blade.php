@@ -50,7 +50,6 @@
                                 <label for="state">Estado</label>
                                 <select class="form-control select2" required name="state" id="state">
                                     <option value="">Selecione um Estado</option>
-                                    <option value="1">Rio Grande do Sul</option>
                                 </select>
                             </div>
 
@@ -116,6 +115,12 @@
                         </div>
 
                         <div class="panel-body">
+                            <div class="form-group">
+                                <label for="neighborhood">Método de Pagamento</label>
+                                <select class="form-control select2" required name="paymentMethod" id="paymentMethod">
+                                    <option value="">Selecione um Método de Pagamento</option>
+                                </select>
+                            </div>
                             <div><label for="name">Produtos</label></div>
                             <div class="products-list list-group col-md-6">
 

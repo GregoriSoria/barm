@@ -55,7 +55,7 @@ form {
 
 
   input, select {
-    &.invalid {
+    &.invalid, &.invalid ~ .select2 {
       border: 1px solid red !important;
     }
   }

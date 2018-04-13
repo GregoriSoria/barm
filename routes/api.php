@@ -29,6 +29,10 @@ Route::group(['namespace' => 'Api', 'prefix' => 'api'], function () {
         Route::get('/byPhone/{phone}', 'CustomersController@byPhone');
     });
 
+    Route::group(['prefix' => 'payment-methods'], function () {
+        Route::get('/', 'PaymentMethodsController@list');
+    });
+
     Route::group(['prefix' => 'states'], function () {
         Route::get('/', 'StatesController@list');
         Route::post('/', 'StatesController@new');

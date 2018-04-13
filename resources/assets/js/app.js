@@ -22,6 +22,7 @@ window.quickOrder = {
         this.declarations();
         this.listProducts();
         this.listStates();
+        this.listPaymentMethods();
         this.startMaps();
     },
 
@@ -295,6 +296,18 @@ window.quickOrder = {
         })
     },
 
+    listPaymentMethods: function () {
+        var self = this;
+        $.ajax({
+            url: APIURL + '/payment-methods',
+            success: function(methods) {
+                methods.forEach(function(methods) {
+                    $('#paymentMethod').append('<option value="' + methods.id + '">' + methods.name + '</option>');
+                });
+            }
+        })
+    },
+
     listStates: function (activeId) {
         var self = this;
         $('#state option').not('[value=""]').remove();
@@ -486,6 +499,7 @@ window.quickOrder = {
     formValidate: function() {
         var phone_primary = document.querySelector("[name='phone_primary']");
         var state = document.querySelector("[name='state']");
+        var paymentMethod = document.querySelector("[name='paymentMethod']");
         var city = document.querySelector("[name='city']");
         var neighborhood = document.querySelector("[name='neighborhood']");
         var number = document.querySelector("[name='number']");
@@ -529,6 +543,12 @@ window.quickOrder = {
             valid = false;
         }
 
+        if (!paymentMethod.value) {
+            console.log('Método de Pagemento inválido');
+            paymentMethod.classList.add('invalid');
+            valid = false;
+        }
+
         if (!products.length) {
             console.log('Sem produtos adicionados');
             document.querySelector('.panel.pedido').classList.add('invalid');
@@ -556,6 +576,8 @@ window.quickOrder = {
         document.querySelector("[name='email']").value = '';
 
         $("[name='phone_primary']").focus();
+
+        $('input, select, .panel').removeClass('invalid');
     },
 
     onBlurPhone: function () {
@@ -651,6 +673,7 @@ window.quickOrder = {
         var form = {
             phone_primary: document.querySelector("[name='phone_primary']").inputmask.unmaskedvalue(),
             products: this.getOrderProducts(),
+            payment_method_id: $('#paymentMethod').val(),
             neighborhood_id: document.querySelector("[name='neighborhood']").value,
             adress: document.querySelector("[name='adress']").value,
             full_adress: document.querySelector("[name='search']").value,
@@ -753,6 +776,7 @@ window.orders = {
         $('#name').val(order.customer.name);
         $('#phone_primary').val(order.customer.phone_primary);
         $('#phone_secondary').val(order.customer.phone_secondary);
+        $('#paymentMethod').val(order.payment_method.name);
         $('#email').val(order.customer.email);
         $('#status').val(order.status).trigger('change');
 

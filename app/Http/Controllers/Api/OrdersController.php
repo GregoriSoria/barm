@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Neighborhood;
 use App\Order;
 use App\OrderProduct;
+use App\PaymentMethod;
 use App\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,13 @@ use Illuminate\Http\Request;
 class OrdersController extends Controller
 {
     public function quick(Request $request) {
+        $request->validate([
+            'phone_primary' => 'required',
+            'number' => 'required',
+            'payment_method_id' => 'required',
+            'neighborhood_id' => 'required'
+        ]);
+
         $customer = Customer::where('phone_primary', $request->input('phone_primary'))->orWhere('phone_secondary', $request->input('phone_primary'))->first();
 
         if (!$customer) {
@@ -54,6 +62,7 @@ class OrdersController extends Controller
         $order->customer_id = $customer->id;
         $order->adress_id = $adress->id;
         $order->adress = $request->input('adress');
+        $order->payment_method_id = $request->input('payment_method_id');
         $order->employee_id = 1;
         $order->status = "APROVADO";
 
@@ -97,6 +106,7 @@ class OrdersController extends Controller
             $order->order_products = $order_products;
 
             $order->customer = Customer::find($order->customer_id);
+            $order->payment_method = PaymentMethod::find($order->payment_method_id);
             $order->adress = Adress::find($order->adress_id);
             $order->adress->neighborhood = Neighborhood::find($order->adress->neighborhood_id);
             $order->adress->city = City::find($order->adress->neighborhood->city_id);
