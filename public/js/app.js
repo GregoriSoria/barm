@@ -18936,7 +18936,7 @@ window.quickOrder = {
 window.orders = {
     init: function init() {
         console.log('Orders!');
-        this.getOrders(10);
+        this.getOrders(5);
         this.declarations();
         this.asyncRefresh();
     },
@@ -19020,11 +19020,10 @@ window.orders = {
 
         if (!exists) {
             $('#orders').append($card);
+            setTimeout(function () {
+                $card.addClass('active');
+            }, 300);
         }
-
-        setTimeout(function () {
-            $card.addClass('active');
-        }, 300);
     },
 
     setCardModalOrder: function setCardModalOrder(order) {
