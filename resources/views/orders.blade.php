@@ -15,6 +15,12 @@
 
 @section('content')
     <div id="orders" class="page-content container-fluid">
+        <div id="toolbar" class="filters">
+            <div class="status active" data-status="aprovado">APROVADO</div>
+            <div class="status active" data-status="producao">EM PRODUÇÃO</div>
+            <div class="status active" data-status="expedido">EXPEDIDO</div>
+            <div class="status active" data-status="entregue">ENTREGUE</div>
+        </div>
         <div class="card sample" data-status="" data-id="" style="display: none;">
             <div class="card-header">
                 <div class="card-title"></div>

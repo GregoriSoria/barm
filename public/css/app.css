@@ -8460,6 +8460,55 @@ form #map {
   text-align: left;
 }
 
+#orders .filters {
+  text-align: center;
+}
+
+#orders .filters .status {
+  display: inline-block;
+  color: #FFF;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  margin-bottom: 5px;
+  opacity: 0.2;
+  -webkit-transform: scale(1);
+          transform: scale(1);
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+
+#orders .filters .status[data-status="aprovado"] {
+  background-color: #F2435C;
+}
+
+#orders .filters .status[data-status="producao"] {
+  background-color: #FABE28;
+}
+
+#orders .filters .status[data-status="expedido"] {
+  background-color: #22A7F0;
+}
+
+#orders .filters .status[data-status="entregue"] {
+  background-color: #1ABC9C;
+}
+
+#orders .filters .status:hover {
+  -webkit-transform: scale(1.04);
+          transform: scale(1.04);
+}
+
+#orders .filters .status.active {
+  opacity: 1;
+}
+
 #orders .card {
   max-width: 18rem;
   letter-spacing: initial;

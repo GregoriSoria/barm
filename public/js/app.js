@@ -18944,6 +18944,7 @@ window.orders = {
     declarations: function declarations() {
         this.onClickCard();
         this.onSaveCard();
+        this.onClickFilter();
     },
 
     getOrders: function getOrders(limit) {
@@ -19073,6 +19074,18 @@ window.orders = {
                     }
                 });
             }
+        });
+    },
+
+    onClickFilter: function onClickFilter() {
+        $('.filters .status').click(function () {
+            var status = $(this).data('status');
+            if ($(this).hasClass("active")) {
+                $('.card[data-status="' + status + '"]').fadeOut();
+            } else {
+                $('.card[data-status="' + status + '"]').fadeIn();
+            }
+            $(this).toggleClass('active');
         });
     }
 };

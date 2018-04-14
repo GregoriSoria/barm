@@ -702,6 +702,7 @@ window.orders = {
     declarations: function() {
         this.onClickCard();
         this.onSaveCard();
+        this.onClickFilter();
     },
 
     getOrders: function(limit) {
@@ -831,6 +832,18 @@ window.orders = {
                     }
                 });
             }
+        });
+    },
+
+    onClickFilter: function() {
+        $('.filters .status').click(function() {
+            var status = $(this).data('status');
+            if ($(this).hasClass("active")) {
+                $('.card[data-status="'+status+'"]').fadeOut();
+            } else {
+                $('.card[data-status="'+status+'"]').fadeIn();
+            }
+            $(this).toggleClass('active');
         });
     }
 };
