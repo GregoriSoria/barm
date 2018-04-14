@@ -18248,6 +18248,7 @@ moment.locale('pt-br');
 
 var APIURL = '/admin/api';
 
+window.ordersList = [];
 window.loader = {
     active: function active() {
         $('#voyager-loader').css('display', 'block');
@@ -18937,41 +18938,48 @@ window.orders = {
         console.log('Orders!');
         this.getOrders(10);
         this.declarations();
+        this.asyncRefresh();
     },
-
-    orders: [],
 
     declarations: function declarations() {
         this.onClickCard();
         this.onSaveCard();
         this.onClickFilter();
+        this.onChangeLimitOrders();
+    },
+
+    asyncRefresh: function asyncRefresh() {
+        var self = this;
+        setInterval(function () {
+            self.getOrders($('#filterOrdersLimit').val());
+        }, 5000);
     },
 
     getOrders: function getOrders(limit) {
         var self = this;
-        window.loader.active();
-        $('.card:not(.sample)').remove();
         $.ajax({
             url: APIURL + '/orders/list' + (limit ? '/' + limit : ''),
             success: function success(orders) {
                 if (orders) {
-                    self.orders = orders;
+                    window.ordersList = orders;
                     orders.forEach(function (order) {
                         self.insertOrder(order);
                     });
-                    window.loader.deactive();
                 }
+                console.log('Pedidos: ', window.ordersList);
             }
         });
     },
 
     getOrderById: function getOrderById(id) {
         var selectedOrder = false;
-        this.orders.forEach(function (order) {
-            if (order.id == id) {
-                selectedOrder = order;
-            }
-        });
+        if (window.ordersList.length) {
+            window.ordersList.forEach(function (order) {
+                if (order.id == id) {
+                    selectedOrder = order;
+                }
+            });
+        }
         return selectedOrder;
     },
 
@@ -18993,16 +19001,30 @@ window.orders = {
     },
 
     insertOrder: function insertOrder(order) {
-        var $card = $('.card.sample').clone().removeClass('sample').css('display', 'inline-block');
+        var $card = $('.card[data-id="' + order.id + '"]'),
+            exists = true;
+        if (!$card.length) {
+            exists = false;
+            $card = $('.card.sample').clone().removeClass('sample').css('display', 'inline-block');
+        }
+
         $card.attr('data-status', order.status.toLowerCase());
         $card.attr('data-id', order.id);
         $card.find('.card-header .card-title').html('Pedido Nº <b>' + order.id + '</b>');
 
-        var items = this.getOrderItens(order);
-        $card.find('.card-body .items').html(items.list);
-        $card.find('.card-body .total').html('Total: R$ ' + parseFloat(items.total).toFixed(2).replace('.', ','));
+        if (order.order_products) {
+            var items = this.getOrderItens(order);
+            $card.find('.card-body .items').html(items.list);
+            $card.find('.card-body .total').html('Total: R$ ' + parseFloat(items.total).toFixed(2).replace('.', ','));
+        }
 
-        $('#orders').append($card);
+        if (!exists) {
+            $('#orders').append($card);
+        }
+
+        setTimeout(function () {
+            $card.addClass('active');
+        }, 300);
     },
 
     setCardModalOrder: function setCardModalOrder(order) {
@@ -19056,6 +19078,18 @@ window.orders = {
         });
     },
 
+    onChangeLimitOrders: function onChangeLimitOrders() {
+        var self = this;
+        $('#filterOrdersLimit').change(function () {
+            var limit = $(this).val();
+            if (window.ordersList.length > limit) {
+                window.ordersList = [];
+                $('.card:not(.sample)').remove();
+            }
+            self.getOrders(limit);
+        });
+    },
+
     onSaveCard: function onSaveCard() {
         var self = this;
         $('#modalSave').click(function () {
@@ -19069,7 +19103,7 @@ window.orders = {
                     data: { id: id, status: status, _method: 'PATCH' },
                     success: function success(order) {
                         $('#cardModal').modal('hide');
-                        self.getOrders(10);
+                        self.insertOrder(order);
                         console.log('Status do Pedido ' + id + ' alterado para ' + order.status);
                     }
                 });
@@ -19081,9 +19115,13 @@ window.orders = {
         $('.filters .status').click(function () {
             var status = $(this).data('status');
             if ($(this).hasClass("active")) {
-                $('.card[data-status="' + status + '"]').fadeOut();
+                $('.card[data-status="' + status + '"]').removeClass('active');
+                /*setTimeout(function() {
+                    $('.card[data-status="'+status+'"]').hide();
+                },300);*/
             } else {
-                $('.card[data-status="' + status + '"]').fadeIn();
+                //$('.card[data-status="'+status+'"]').show();
+                $('.card[data-status="' + status + '"]').addClass('active');
             }
             $(this).toggleClass('active');
         });

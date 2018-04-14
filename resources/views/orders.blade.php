@@ -16,19 +16,36 @@
 @section('content')
     <div id="orders" class="page-content container-fluid">
         <div id="toolbar" class="filters">
-            <div class="status active" data-status="aprovado">APROVADO</div>
-            <div class="status active" data-status="producao">EM PRODUÇÃO</div>
-            <div class="status active" data-status="expedido">EXPEDIDO</div>
-            <div class="status active" data-status="entregue">ENTREGUE</div>
-        </div>
-        <div class="card sample" data-status="" data-id="" style="display: none;">
-            <div class="card-header">
-                <div class="card-title"></div>
+            <h4 class="relationship_table_select">FILTROS</h4>
+            <div class="filter-status col-md-8">
+                <p class="relationship_table_select">Status</p>
+                <div class="status active" data-status="aprovado">APROVADO</div>
+                <div class="status active" data-status="producao">EM PRODUÇÃO</div>
+                <div class="status active" data-status="expedido">EXPEDIDO</div>
+                <div class="status active" data-status="entregue">ENTREGUE</div>
             </div>
-            <div class="card-body">
-                <h5 class="card-title">Items</h5>
-                <ul class="items"></ul>
-                <h5 class="total"></h5>
+            <div class="col-md-4">
+                <p class="relationship_table_select">Limite</p>
+                <select class="select2 select2-hidden-accessible" id="filterOrdersLimit" name="filterOrdersLimit" tabindex="-1" aria-hidden="true">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="clear-both"></div>
+        </div>
+        <div class="cards">
+            <div class="card sample" data-status="" data-id="" style="display: none;">
+                <div class="card-header">
+                    <div class="card-title"></div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Items</h5>
+                    <ul class="items"></ul>
+                    <h5 class="total"></h5>
+                </div>
             </div>
         </div>
     </div>

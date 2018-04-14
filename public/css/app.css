@@ -11,6 +11,18 @@ a:hover {
   color: #FFF;
 }
 
+.site-footer-right {
+  visibility: hidden;
+}
+
+nav .logo-icon-container {
+  float: left;
+}
+
+nav .logo-icon-container img {
+  top: 15px !important;
+}
+
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
  * Copyright 2011-2016 Twitter, Inc.
@@ -8464,6 +8476,10 @@ form #map {
   text-align: center;
 }
 
+#orders .filters .select2 {
+  z-index: 1 !important;
+}
+
 #orders .filters .status {
   display: inline-block;
   color: #FFF;
@@ -8510,19 +8526,31 @@ form #map {
 }
 
 #orders .card {
-  max-width: 18rem;
+  height: 0;
+  width: 0;
+  max-width: 100%;
   letter-spacing: initial;
   display: inline-block;
-  margin-right: 20px;
+  margin-right: 0px;
   margin-top: 30px;
   color: #FFF;
   -webkit-box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
           box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  -webkit-transform: scale(1);
-          transform: scale(1);
+  -webkit-transform: scale(0);
+          transform: scale(0);
+  pointer-events: none;
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
+}
+
+#orders .card.active {
+  width: auto;
+  height: auto;
+  margin-right: 20px;
+  -webkit-transform: scale(1);
+          transform: scale(1);
+  pointer-events: initial;
 }
 
 #orders .card:hover {
@@ -8532,10 +8560,20 @@ form #map {
 
 #orders .card .card-header .card-title {
   padding: 10px 20px;
+  height: 42px;
+  white-space: nowrap;
+}
+
+#orders .card .card-body .card-title {
+  white-space: nowrap;
 }
 
 #orders .card .card-body .items {
   padding-left: 20px;
+}
+
+#orders .card .card-body .total {
+  white-space: nowrap;
 }
 
 #orders .card[data-status="aprovado"] {

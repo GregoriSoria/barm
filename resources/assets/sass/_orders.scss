@@ -4,6 +4,10 @@
   .filters {
     text-align: center;
 
+    .select2 {
+      z-index: 1 !important;
+    }
+
     .status {
       display: inline-block;
       color: #FFF;
@@ -44,16 +48,27 @@
   }
 
   .card {
-    max-width: 18rem;
+    height: 0;
+    width: 0;
+    max-width: 100%;
     letter-spacing: initial;
     display: inline-block;
-    margin-right: 20px;
+    margin-right: 0px;
     margin-top: 30px;
     color: #FFF;
     box-shadow: 1px 1px 3px rgba(0,0,0,.3);
     cursor: pointer;
-    transform: scale(1);
+    transform: scale(0);
+    pointer-events: none;
     transition: all 0.3s ease-in-out;
+
+    &.active {
+      width: auto;
+      height: auto;
+      margin-right: 20px;
+      transform: scale(1);
+      pointer-events: initial;
+    }
 
     &:hover {
       transform: scale(1.05);
@@ -62,12 +77,22 @@
     .card-header {
       .card-title {
         padding: 10px 20px;
+        height: 42px;
+        white-space: nowrap;
       }
     }
 
     .card-body {
+      .card-title {
+        white-space: nowrap;
+      }
+
       .items {
         padding-left: 20px;
+      }
+
+      .total {
+        white-space: nowrap;
       }
     }
 

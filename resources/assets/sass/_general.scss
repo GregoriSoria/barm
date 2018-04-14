@@ -6,3 +6,15 @@ a {
     color: #FFF;
   }
 }
+
+.site-footer-right {
+  visibility: hidden;
+}
+
+nav .logo-icon-container {
+  float: left;
+
+  img {
+    top: 15px !important;
+  }
+}
