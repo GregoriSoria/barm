@@ -764,6 +764,7 @@ window.orders = {
 
     setCardModalOrder: function(order) {
         $('#cardModal .modal-title .order').html('Pedido Nº ' + order.id);
+        $('#cardModal #print a').attr('href', 'pedidos/cupon/' + order.id);
         $('#cardModal').attr('data-id', order.id);
         $('#city').val(order.adress.city.name);
         $('#neighborhood').val(order.adress.neighborhood.name);

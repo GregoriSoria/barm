@@ -23,6 +23,10 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/pedidos', function () {
             return view('orders');
         });
+
+        Route::group(['namespace' => 'Api', 'prefix' => 'pedidos'], function () {
+            Route::get('/cupon/{pedidos_id}', 'OrdersController@find');
+        });
     });
 });
 

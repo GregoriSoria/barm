@@ -16,7 +16,9 @@
 @section('content')
     <div id="orders" class="page-content container-fluid">
         <div class="card sample" data-status="" data-id="" style="display: none;">
-            <div class="card-header"><div class="card-title"></div></div>
+            <div class="card-header">
+                <div class="card-title"></div>
+            </div>
             <div class="card-body">
                 <h5 class="card-title">Items</h5>
                 <ul class="items"></ul>
@@ -121,6 +123,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="relationship-btn-container">
+                        <button id="print" class="btn btn-info"><a href="pedidos/cupon/0" target="_blank">Imprimir <i class="voyager-receipt"></i></a></button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         <button id="modalSave" class="btn btn-danger btn-relationship"><span>Salvar</span></button>
                     </div>

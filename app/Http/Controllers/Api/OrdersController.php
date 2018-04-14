@@ -100,8 +100,11 @@ class OrdersController extends Controller
 
         foreach ($orders as $order) {
             $order_products = OrderProduct::where('order_id', $order->id)->get();
+            $order->total = 0.0;
             foreach ($order_products as $order_product) {
                 $order_product->product = Product::find($order_product->product_id);
+                $order_product->total = $order_product->product->value * $order_product->quantity;
+                $order->total += $order_product->total;
             }
             $order->order_products = $order_products;
 
@@ -113,6 +116,27 @@ class OrdersController extends Controller
         }
 
         return new JsonResponse($orders, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
+    }
+
+    public function find(Request $request, $pedido_id) {
+        $order = Order::findOrFail($pedido_id);
+
+        $order->total = 0.0;
+        $order_products = OrderProduct::where('order_id', $order->id)->get();
+        foreach ($order_products as $order_product) {
+            $order_product->product = Product::find($order_product->product_id);
+            $order_product->total = $order_product->product->value * $order_product->quantity;
+            $order->total += $order_product->total;
+        }
+        $order->order_products = $order_products;
+
+        $order->customer = Customer::find($order->customer_id);
+        $order->payment_method = PaymentMethod::find($order->payment_method_id);
+        $order->adress = Adress::find($order->adress_id);
+        $order->adress->neighborhood = Neighborhood::find($order->adress->neighborhood_id);
+        $order->adress->city = City::find($order->adress->neighborhood->city_id);
+
+        return view('cupon', ['order' => $order]);
     }
 
     public function changeStatus(Request $request) {
