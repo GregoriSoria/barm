@@ -699,7 +699,7 @@ window.orders = {
         console.log('Orders!');
         this.getOrders(10);
         this.declarations();
-        //this.asyncRefresh();
+        this.asyncRefresh();
     },
 
     declarations: function() {
