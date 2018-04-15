@@ -80,6 +80,7 @@ class OrdersController extends Controller
                 $productOrder->product_id = $product->id;
                 $productOrder->order_id = $order->id;
                 $productOrder->quantity = $products[$i]['quantity'];
+                $productOrder->observation = $products[$i]['observation'];
 
                 $productOrder->save();
             }

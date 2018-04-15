@@ -270,7 +270,7 @@ window.quickOrder = {
     },
 
     setOrderProductListItem: function(quantity, id, name, value, bg, txtColor) {
-        return '<a href="#" ondragstart="return false;" class="list-group-item list-group-item-action" data-id="'+id+'" data-quantity="'+quantity+'" data-value="'+value+'" style="background-color: '+(bg ? bg :'#FFF')+' "><span class="name" style="color: '+(txtColor ? txtColor :'#111')+' ">'+name+'</span><i class="voyager-x"></i><span class="badge badge-primary badge-pill">'+quantity+'</span></a>';
+        return '<a href="#" ondragstart="return false;" class="list-group-item list-group-item-action" data-id="'+id+'" data-quantity="'+quantity+'" data-value="'+value+'" style="background-color: '+(bg ? bg :'#FFF')+' "><span class="name" style="color: '+(txtColor ? txtColor :'#111')+' ">'+name+'</span><i class="voyager-x"></i><span class="badge badge-primary badge-pill">'+quantity+'</span></a><input type="text" data-id="'+id+'" class="form-control" value="" placeholder="Observação">';
     },
 
     declarations: function() {
@@ -452,6 +452,7 @@ window.quickOrder = {
             }
 
             if (parseInt(document.querySelector(self.orderProductsListItem+'[data-id="'+id+'"] .badge').innerHTML) == 0) {
+                $('input[data-id="'+id+'"]').remove();
                 $(this).remove();
             }
 
@@ -481,17 +482,19 @@ window.quickOrder = {
         });
 
 
-        $(this.orderProductsListItem).remove();
+        $(this.orderProductsListItem+', .order-products-list.list-group input').remove();
     },
 
     getOrderProducts: function() {
         var self = this;
         var products = [];
         document.querySelectorAll(self.orderProductsListItem).forEach(function(el, i) {
+            var id = el.getAttribute('data-id');
             products.push({
-                id: el.getAttribute('data-id'),
+                id: id,
                 name: el.querySelector('.name').innerHTML,
-                quantity: el.getAttribute('data-quantity')
+                quantity: el.getAttribute('data-quantity'),
+                observation: document.querySelector('.order-products-list input[data-id="'+id+'"]').value
             });
         });
         return products;
@@ -694,9 +697,9 @@ window.quickOrder = {
 window.orders = {
     init: function() {
         console.log('Orders!');
-        this.getOrders(5);
+        this.getOrders(10);
         this.declarations();
-        this.asyncRefresh();
+        //this.asyncRefresh();
     },
 
     declarations: function() {
@@ -748,11 +751,12 @@ window.orders = {
             var id = product.product.id,
                 name = product.product.name,
                 quantity = parseInt(product.quantity),
+                obs = product.observation ? 'class="obs"' : '',
                 value = parseFloat(product.product.value).toFixed(2).replace('.',',');
 
             total += parseFloat(product.product.value)*quantity;
 
-            items += '<li data-id="'+id+'">x'+quantity+' '+name+' R$ '+value+'</li>'
+            items += '<li '+obs+' data-id="'+id+'">x'+quantity+' '+name+' R$ '+value+'</li>'
         });
 
         return {list: items, total: total};
@@ -803,6 +807,11 @@ window.orders = {
         $('#paymentMethod').val(order.payment_method.name);
         $('#email').val(order.customer.email);
         $('#status').val(order.status).trigger('change');
+        order.order_products.forEach(function(oProduct) {
+            if (oProduct.observation) {
+                $('#items li[data-id="'+oProduct.product_id+'"]').append(' <b>Obs: '+oProduct.observation+'</b>');
+            }
+        });
 
         $('#cardModal').removeClass('modal-danger modal-warning modal-info modal-success');
         switch (order.status) {

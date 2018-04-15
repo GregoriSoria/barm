@@ -8572,6 +8572,10 @@ form #map {
   padding-left: 20px;
 }
 
+#orders .card .card-body .items li.obs {
+  border: 1px inset #00ff16;
+}
+
 #orders .card .card-body .total {
   white-space: nowrap;
 }

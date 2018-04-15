@@ -89,6 +89,12 @@
 
       .items {
         padding-left: 20px;
+
+        li {
+          &.obs {
+            border: 1px inset #00ff16;
+          }
+        }
       }
 
       .total {
