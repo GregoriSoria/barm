@@ -578,6 +578,7 @@ window.quickOrder = {
         document.querySelector("[name='name']").value = '';
         document.querySelector("[name='phone_secondary']").value = '';
         document.querySelector("[name='email']").value = '';
+        document.querySelector("[name='change']").value = '';
 
         $("[name='phone_primary']").focus();
 
@@ -678,6 +679,7 @@ window.quickOrder = {
             phone_primary: document.querySelector("[name='phone_primary']").inputmask.unmaskedvalue(),
             products: this.getOrderProducts(),
             payment_method_id: $('#paymentMethod').val(),
+            change: document.querySelector("[name='change']").value,
             neighborhood_id: document.querySelector("[name='neighborhood']").value,
             adress: document.querySelector("[name='adress']").value,
             full_adress: document.querySelector("[name='search']").value,
@@ -801,6 +803,7 @@ window.orders = {
         var items = this.getOrderItens(order);
         $('#items').html(items.list);
         $('#total').val('R$ ' + parseFloat(items.total).toFixed(2).replace('.',','));
+        $('#change').val('R$ ' + parseFloat(order.change ? order.change : 0).toFixed(2).replace('.',','));
         $('#name').val(order.customer.name);
         $('#phone_primary').val(order.customer.phone_primary);
         $('#phone_secondary').val(order.customer.phone_secondary);

@@ -121,6 +121,12 @@
                                     <option value="">Selecione um Método de Pagamento</option>
                                 </select>
                             </div>
+
+                            <div class="form-group">
+                                <label for="change">Troco para</label>
+                                <input type="number" class="form-control" id="change" name="change" placeholder="Troco para">
+                            </div>
+
                             <div><label for="name">Produtos</label></div>
                             <div class="products-list list-group col-md-6">
 

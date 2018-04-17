@@ -62,6 +62,7 @@ class OrdersController extends Controller
         $order->customer_id = $customer->id;
         $order->adress_id = $adress->id;
         $order->adress = $request->input('adress');
+        $order->change = $request->input('change');
         $order->payment_method_id = $request->input('payment_method_id');
         $order->employee_id = 1;
         $order->status = "APROVADO";

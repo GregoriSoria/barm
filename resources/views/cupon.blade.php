@@ -65,74 +65,37 @@
     </head>
     <body>
 
+	Pastel & Beer<br>
+	{{date("d/m/Y – H:i:s")}}<br>
+	Nome cliente: {{$order->customer->name}} <br><br>
 
-      <table class="printer-ticket">
- 	<thead>
-		<tr>
-			<th class="title" colspan="3">Pastel & Beer</th>
-		</tr>
-		<tr>
-			<th colspan="3">{{date("d/m/Y – H:i:s")}}</th>
-		</tr>
-		<tr>
-			<th colspan="3">
-    			{{$order->customer->name}} <br />
-				{{$order->customer->phone_primary}} <br>
-				{{$order->adress->adress}} {{$order->adress->number}}, {{$order->adress->neighborhood->name}}, {{$order->adress->city->name}}
-			</th>
-		</tr>
-		<tr>
-			<th class="ttu" colspan="3">
-				<b>Cupom não fiscal</b>
-			</th>
-		</tr>
-	</thead>
+	Telefone cliente: {{$order->customer->phone_primary}} <br><br>
+
+	Endereço: {{$order->adress->adress}} {{$order->adress->number}}, {{$order->adress->neighborhood->name}}, {{$order->adress->city->name}} <br><br>
+
+	Cupom não fiscal<br>
 	@foreach ($order->order_products as $oProduct)
-		<tbody>
-			<tr class="top">
-				<td colspan="3">{{$oProduct->product->name}}</td>
-			</tr>
-			@if ($oProduct->observation)
-				<tr>
-					<td colspan="3">Observação : {{$oProduct->observation}}</td>
-				</tr>
-			@endif
-			<tr>
-				<td>R$ {{str_replace('.', ',', number_format((float)$oProduct->product->value, 2, '.', ''))}}</td>
-				<td>{{$oProduct->quantity}}.0</td>
-				<td>R$ {{str_replace('.', ',', number_format((float)$oProduct->total, 2, '.', ''))}}</td>
-		</tbody>
+		{{$oProduct->product->name}}<br>
+		@if ($oProduct->observation)
+			Observação : {{$oProduct->observation}}<br>
+		@endif
+		R$ {{str_replace('.', ',', number_format((float)$oProduct->product->value, 2, '.', ''))}}<br>
+		{{$oProduct->quantity}}.0<br>
+		R$ {{str_replace('.', ',', number_format((float)$oProduct->total, 2, '.', ''))}}<br><br>
 	@endforeach
-	<tfoot>
-		<tr class="sup ttu p--0">
-			<td colspan="3">
-				<b>Totais</b>
-			</td>
-		</tr>
-		<tr class="ttu">
-			<td colspan="2">Valor do pedido</td>
-			<td align="right">R$ {{str_replace('.', ',', number_format((float)$order->total, 2, '.', ''))}}</td>
-		</tr>
-		<tr class="ttu">
-			<td colspan="2">Forma de pagamento</td>
-			<td align="right">{{$order->payment_method->name}}</td>
-		</tr>
-		<!--<tr class="ttu">
-			<td colspan="2">Troco</td>
-			<td align="right">(R$50,00)-R$15,50</td>
-		</tr>-->
-		<tr class="ttu">
-			<td colspan="2">Taxa de serviço</td>
-			<td align="right">-</td>
-		</tr>
-		<tr class="ttu">
-			<td colspan="2">Desconto</td>
-			<td align="right">-</td>
-		</tr>
-		<tr class="ttu">
-			<td colspan="2">Total</td>
-			<td align="right">R$ {{str_replace('.', ',', number_format((float)$order->total, 2, '.', ''))}}</td>
-		</tr>
+	Totais<br><br>
+	Valor do pedido:<br>
+	R$ {{str_replace('.', ',', number_format((float)$order->total, 2, '.', ''))}}<br><br>
+	Forma de pagamento:<br>
+	{{$order->payment_method->name}}<br><br>
+	Troco:<br>
+	(R${{str_replace('.', ',', number_format((float)$order->change, 2, '.', ''))}})-R${{str_replace('.', ',', number_format((float)$order->total, 2, '.', ''))}}<br><br>
+	Taxa de serviço:<br>
+	- <br><br>
+	Desconto:<br>
+	- <br><br>
+	Total:<br>
+	R$ {{str_replace('.', ',', number_format((float)$order->total, 2, '.', ''))}}<br><br>
 		<!--
 		<tr class="sup ttu p--0">
 			<td colspan="3">
@@ -156,19 +119,8 @@
 			<td align="right">R$0,44</td>
 		</tr>
 		-->
-		<tr class="sup">
-			<td colspan="3" align="center">
-				<b>Pedido:</b>
-			</td>
-		</tr>
-		<tr class="sup">
-			<td colspan="3" align="center">
-    www.pastelebeer.com.br
-
-			</td>
-		</tr>
-	</tfoot>
-</table>
+	Pedido:<br>
+	www.pastelebeer.com.br
 
 	<script>
         window.print();

@@ -102,6 +102,11 @@
                             <input type="text" class="form-control" readonly required id="total" name="total" value="R$ 0,00" maxlength="80">
                         </div>
 
+                        <div class="col-md-12 relationship_details">
+                            <p class="relationship_table_select">Troco para</p>
+                            <input type="text" class="form-control" readonly required id="change" name="change" value="R$ 0,00" maxlength="80">
+                        </div>
+
                         <div class="col-md-12 relationship_details_more">
                             <div class="well">
                                 <label>Cliente</label>
