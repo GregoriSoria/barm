@@ -682,7 +682,9 @@ window.quickOrder = {
     onBlurPhone: function () {
         var self = this;
         $('[name=phone_primary]').blur(function() {
-            self.setUser();
+            if (!window.editing_order) {
+                self.setUser();
+            }
         });
     },
 
