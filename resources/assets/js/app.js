@@ -26,6 +26,7 @@ window.quickOrder = {
         this.listEmployees();
         this.listPaymentMethods();
         this.startMaps();
+        this.listLastOrders();
     },
 
     map: null,
@@ -282,7 +283,21 @@ window.quickOrder = {
         this.onRemoveProduct();
         this.onSubmit();
         this.onCheckEnter();
+        this.onClickEditOrder();
         this.onBtnClear();
+    },
+
+    listLastOrders: function () {
+        var self = this;
+        $.ajax({
+            url: APIURL + '/orders/list/10',
+            success: function(orders) {
+                $('.last-orders-list').html('');
+                orders.forEach(function(order) {
+                    $('.last-orders-list').append('<a href="#" class="list-group-item list-group-item-action" data-id="'+order.id+'">'+(order.customer.name ? order.id + ': ' +order.customer.name : order.id)+'</a>');
+                });
+            }
+        });
     },
 
     listProducts: function () {
@@ -307,7 +322,7 @@ window.quickOrder = {
                     $('#employee').append('<option value="' + employee.id + '">' + employee.name + '</option>');
                 });
             }
-        })
+        });
     },
 
     listPaymentMethods: function () {
@@ -408,6 +423,50 @@ window.quickOrder = {
         });
     },
 
+    onClickEditOrder: function() {
+        var self = this;
+        $(document).on('click', '.last-orders-list .list-group-item', function(e) {
+            e.preventDefault();
+
+            var order_id = e.target.dataset.id;
+            if (order_id) {
+                $.ajax({
+                    url: APIURL + '/orders/find/' + order_id,
+                    success: function(order) {
+                        if (order) {
+                            self.setOrderToEdit(order);
+                        }
+                    }
+                });
+            }
+        });
+    },
+
+    setOrderToEdit: function(order) {
+        var self = this;
+        this.clearForm();
+        document.querySelector("[name='phone_primary']").value = order.customer.phone_primary;
+        this.setUser();
+        $('.last-orders-list .list-group-item[data-id="'+order.id+'"]').addClass('editing');
+        window.editing_order = order.id;
+
+        order.order_products.forEach(function(product) {
+            for (var i = 0; i < product.quantity; i++) {
+                $(self.productsListItem+'[data-id="'+product.product_id+'"]').trigger('click');
+            }
+
+            if (product.observation) {
+                setTimeout(function() {
+                    document.querySelector('.order-products-list input[data-id="'+product.product_id+'"]').value = product.observation;
+                },100)
+            }
+        });
+
+        document.querySelector("[name='change']").value = order.change;
+        $('#employee').val(order.employee_id).trigger('change');
+        $('#paymentMethod').val(order.payment_method_id).trigger('change');
+    },
+
     onAddProduct: function() {
         var self = this;
         $(document).on('click', self.productsListItem, function(e) {
@@ -439,6 +498,7 @@ window.quickOrder = {
             }
 
             document.querySelector('.panel.pedido').classList.remove('invalid');
+            self.refreshOrderValue();
         });
     },
 
@@ -470,7 +530,22 @@ window.quickOrder = {
             }
 
             document.querySelector('.panel.pedido').classList.remove('invalid');
+            self.refreshOrderValue();
         });
+    },
+
+    refreshOrderValue: function() {
+        var total = 0.0;
+
+        var products = document.querySelectorAll(this.orderProductsListItem);
+
+        products.forEach(function(product) {
+            total += product.dataset.quantity * product.dataset.value;
+        });
+
+        total = 'R$ ' + total.toFixed(2);
+        total = total.replace('.', ',');
+        $('.panel.pedido .panel-title .order-value').html(total);
     },
 
     clearOrderProducts: function () {
@@ -496,6 +571,7 @@ window.quickOrder = {
 
 
         $(this.orderProductsListItem+', .order-products-list.list-group input').remove();
+        $('.panel.pedido .panel-title .order-value').html('R$ 0,00');
     },
 
     getOrderProducts: function() {
@@ -580,6 +656,7 @@ window.quickOrder = {
     },
 
     clearForm: function() {
+        window.editing_order = null;
         this.clearOrderProducts();
         document.querySelector("[name='phone_primary']").value = '';
         $("[name='neighborhood']").val('').trigger('change');
@@ -594,6 +671,8 @@ window.quickOrder = {
         $('#employee').val('').trigger('change');
         $('#paymentMethod').val('').trigger('change');
         document.querySelector("[name='change']").value = '';
+
+        $('.last-orders-list .list-group-item').removeClass('editing');
 
         $("[name='phone_primary']").focus();
 
@@ -671,10 +750,15 @@ window.quickOrder = {
                     contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                     url: APIURL + '/orders/quick',
                     success: function (response) {
+                        if (window.editing_order) {
+                            toastr.success('Pedido ' + window.editing_order + ' editado com sucesso!');
+                        } else {
+                            toastr.success('Pedido adicionado com sucesso!');
+                        }
                         self.clearForm();
                         self.listProducts();
                         console.log(response);
-                        toastr.success('Pedido adicionado com sucesso!');
+                        self.listLastOrders();
                         $("form button[type=submit]").removeAttr('disabled');
                     },
                     error: function (err) {
@@ -691,6 +775,7 @@ window.quickOrder = {
 
     getFormValues: function() {
         var form = {
+            id: window.editing_order,
             phone_primary: document.querySelector("[name='phone_primary']").inputmask.unmaskedvalue(),
             products: this.getOrderProducts(),
             payment_method_id: $('#paymentMethod').val(),

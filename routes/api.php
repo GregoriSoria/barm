@@ -58,6 +58,7 @@ Route::group(['namespace' => 'Api', 'prefix' => 'api'], function () {
         Route::post('/quick', 'OrdersController@quick');
         Route::get('/list', 'OrdersController@list');
         Route::get('/list/{limit}', 'OrdersController@list');
+        Route::get('/find/{id}', 'OrdersController@find');
         Route::patch('/status', 'OrdersController@changeStatus');
     });
 });

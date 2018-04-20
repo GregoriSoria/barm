@@ -57,18 +57,30 @@ class OrdersController extends Controller
 
         $adress->saveOrFail();
 
-        $order = new Order;
+        $order = null;
+        if ($request->has('id')) {
+            $order = Order::find($request->input('id'));
+        } else {
+            $order = new Order;
+        }
         $order->customer_id = $customer->id;
         $order->adress_id = $adress->id;
         $order->adress = $request->input('adress');
         $order->change = $request->input('change');
         $order->payment_method_id = $request->input('payment_method_id');
         $order->employee_id = $request->input('employee_id');
-        $order->status = "APROVADO";
+
+        if (!$request->has('id')) {
+            $order->status = "APROVADO";
+        }
 
         $order->save();
 
         $products = $request['products'];
+
+        if ($request->has('id')) {
+            OrderProduct::where('order_id', $request->input('id'))->delete();
+        }
 
         for ($i = 0; $i < count($products); $i++) {
             $product = Product::where('id', $products[$i]['id'])->where('quantity', '>=', $products[$i]['quantity'])->first();
@@ -121,6 +133,28 @@ class OrdersController extends Controller
     }
 
     public function find(Request $request, $pedido_id) {
+        $order = Order::findOrFail($pedido_id);
+
+        $order->total = 0.0;
+        $order_products = OrderProduct::where('order_id', $order->id)->get();
+        foreach ($order_products as $order_product) {
+            $order_product->product = Product::find($order_product->product_id);
+            $order_product->total = $order_product->product->value * $order_product->quantity;
+            $order->total += $order_product->total;
+        }
+        $order->order_products = $order_products;
+
+        $order->customer = Customer::find($order->customer_id);
+        $order->payment_method = PaymentMethod::find($order->payment_method_id);
+        $order->employee = Employee::find($order->employee_id);
+        $order->adress = Adress::find($order->adress_id);
+        $order->adress->neighborhood = Neighborhood::find($order->adress->neighborhood_id);
+        $order->adress->city = City::find($order->adress->neighborhood->city_id);
+
+        return new JsonResponse($order, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
+    }
+
+    public function cupon(Request $request, $pedido_id) {
         $order = Order::findOrFail($pedido_id);
 
         $order->total = 0.0;

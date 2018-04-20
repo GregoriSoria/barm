@@ -145,7 +145,7 @@
                     <!-- ### DETAILS ### -->
                     <div class="panel pedido panel-bordered panel-warning">
                         <div class="panel-heading">
-                            <h3 class="panel-title"><i class="icon wb-clipboard"></i> Pedido</h3>
+                            <h3 class="panel-title"><i class="icon wb-clipboard"></i> Pedido <span class="order-value">R$ 0,00</span></h3>
                             <div class="panel-actions">
                                 <a class="panel-action voyager-angle-down" data-toggle="panel-collapse" aria-hidden="true"></a>
                             </div>
@@ -154,6 +154,22 @@
                             <div class="panel-body">
                                 <label for="name">Produtos</label>
                                 <div class="order-products-list list-group">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel ultimos-pedidos panel-bordered panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><i class="icon wb-clipboard"></i> Últimos pedidos</h3>
+                            <div class="panel-actions">
+                                <a class="panel-action voyager-angle-down" data-toggle="panel-collapse" aria-hidden="true"></a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="panel-body">
+                                <div class="last-orders-list list-group">
 
                                 </div>
                             </div>

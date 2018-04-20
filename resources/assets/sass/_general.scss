@@ -18,3 +18,10 @@ nav .logo-icon-container {
     top: 15px !important;
   }
 }
+
+@media (max-width: 768px) {
+  .app-container .content-container .side-body {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}

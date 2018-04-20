@@ -8,6 +8,21 @@ form {
     border: 1px solid #e5e7e8;
   }
 
+  .col-pedido .panel {
+
+    .panel-heading {
+      .panel-title {
+        padding-top: 0px;
+      }
+    }
+
+    >.panel-body {
+      max-height: 28vh;
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
+  }
+
   .list-group-item {
     user-select: none;
     border-radius: 15px !important;
@@ -22,6 +37,10 @@ form {
 
     &:active {
       transform: scale(1.2);
+    }
+
+    &.editing {
+      background-color: #15efc4;
     }
 
     i:before {
@@ -40,6 +59,7 @@ form {
       margin-top: 3px;
       border-radius: 3px;
     }
+
 
     &[disabled=disabled] {
       opacity: 0.6;
