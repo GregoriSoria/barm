@@ -134,6 +134,11 @@
                         </div>
 
                         <div class="col-md-12 relationship_details">
+                            <p class="relationship_table_select">Entregador</p>
+                            <input type="text" class="form-control" readonly required id="employee" name="employee" maxlength="80">
+                        </div>
+
+                        <div class="col-md-12 relationship_details">
                             <p class="relationship_table_select">Método de Pagamnto</p>
                             <input type="text" class="form-control" readonly required id="paymentMethod" name="paymentMethod" maxlength="80">
                         </div>

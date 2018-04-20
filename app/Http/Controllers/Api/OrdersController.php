@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Adress;
 use App\City;
 use App\Customer;
+use App\Employee;
 use App\Http\Controllers\Controller;
 use App\Neighborhood;
 use App\Order;
@@ -37,9 +38,7 @@ class OrdersController extends Controller
         $customer->email = $request->input('email');
         $customer->birth = $request->input('birth');
         $customer->cpf = $request->input('cpf');
-        if ($phone1 && $phone2 && $phone1 != $phone2) {
-            $customer->phone_primary = $phone1;
-        }
+        $customer->phone_primary = $phone1;
         $customer->phone_secondary = $phone2;
 
         $customer->saveOrFail();
@@ -64,7 +63,7 @@ class OrdersController extends Controller
         $order->adress = $request->input('adress');
         $order->change = $request->input('change');
         $order->payment_method_id = $request->input('payment_method_id');
-        $order->employee_id = 1;
+        $order->employee_id = $request->input('employee_id');
         $order->status = "APROVADO";
 
         $order->save();
@@ -112,6 +111,7 @@ class OrdersController extends Controller
 
             $order->customer = Customer::find($order->customer_id);
             $order->payment_method = PaymentMethod::find($order->payment_method_id);
+            $order->employee = Employee::find($order->employee_id);
             $order->adress = Adress::find($order->adress_id);
             $order->adress->neighborhood = Neighborhood::find($order->adress->neighborhood_id);
             $order->adress->city = City::find($order->adress->neighborhood->city_id);
@@ -134,6 +134,7 @@ class OrdersController extends Controller
 
         $order->customer = Customer::find($order->customer_id);
         $order->payment_method = PaymentMethod::find($order->payment_method_id);
+        $order->employee = Employee::find($order->employee_id);
         $order->adress = Adress::find($order->adress_id);
         $order->adress->neighborhood = Neighborhood::find($order->adress->neighborhood_id);
         $order->adress->city = City::find($order->adress->neighborhood->city_id);

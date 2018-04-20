@@ -23,6 +23,7 @@ window.quickOrder = {
         this.declarations();
         this.listProducts();
         this.listStates();
+        this.listEmployees();
         this.listPaymentMethods();
         this.startMaps();
     },
@@ -292,6 +293,18 @@ window.quickOrder = {
             success: function(products) {
                 products.forEach(function(product) {
                     $(self.productsList).append(self.setProductListItem(product.quantity, product.id, product.name, product.value, product.bg_color, product.text_color));
+                });
+            }
+        })
+    },
+
+    listEmployees: function () {
+        var self = this;
+        $.ajax({
+            url: APIURL + '/employees',
+            success: function(employees) {
+                employees.forEach(function(employee) {
+                    $('#employee').append('<option value="' + employee.id + '">' + employee.name + '</option>');
                 });
             }
         })
@@ -578,6 +591,8 @@ window.quickOrder = {
         document.querySelector("[name='name']").value = '';
         document.querySelector("[name='phone_secondary']").value = '';
         document.querySelector("[name='email']").value = '';
+        $('#employee').val('').trigger('change');
+        $('#paymentMethod').val('').trigger('change');
         document.querySelector("[name='change']").value = '';
 
         $("[name='phone_primary']").focus();
@@ -679,6 +694,7 @@ window.quickOrder = {
             phone_primary: document.querySelector("[name='phone_primary']").inputmask.unmaskedvalue(),
             products: this.getOrderProducts(),
             payment_method_id: $('#paymentMethod').val(),
+            employee_id: $('#employee').val(),
             change: document.querySelector("[name='change']").value,
             neighborhood_id: document.querySelector("[name='neighborhood']").value,
             adress: document.querySelector("[name='adress']").value,
@@ -807,6 +823,7 @@ window.orders = {
         $('#name').val(order.customer.name);
         $('#phone_primary').val(order.customer.phone_primary);
         $('#phone_secondary').val(order.customer.phone_secondary);
+        $('#employee').val(order.employee.name);
         $('#paymentMethod').val(order.payment_method.name);
         $('#email').val(order.customer.email);
         $('#status').val(order.status).trigger('change');

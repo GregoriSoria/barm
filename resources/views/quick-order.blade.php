@@ -116,6 +116,13 @@
 
                         <div class="panel-body">
                             <div class="form-group">
+                                <label for="neighborhood">Entregador</label>
+                                <select class="form-control select2" name="employee" id="employee">
+                                    <option value="">Selecione um entregador</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="neighborhood">Método de Pagamento</label>
                                 <select class="form-control select2" required name="paymentMethod" id="paymentMethod">
                                     <option value="">Selecione um Método de Pagamento</option>
