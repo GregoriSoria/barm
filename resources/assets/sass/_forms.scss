@@ -1,4 +1,13 @@
 form {
+  .products-list {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding: 10px;
+    height: 300px;
+    min-width: 60%;
+    border: 1px solid #e5e7e8;
+  }
+
   .list-group-item {
     user-select: none;
     border-radius: 15px !important;
